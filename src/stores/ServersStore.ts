@@ -1,33 +1,39 @@
 import { ref } from 'vue'
 import { defineStore, acceptHMRUpdate } from 'pinia'
 import { NewServerListModel } from '@/entity/ServerListModel'
-import type { ColonyListInterface, ServerInterface } from '@/entity/ServerListModel'
+import type { NamespaceInterface, ColonyListInterface, ServerModel } from '@/entity/ServerListModel'
 
 //全局可用服务器列表信息
 export const useServersStore = defineStore('ServersStore', () => {
     const ServerList = ref(NewServerListModel())
 
     //更新ServerList
-    function updateServerList(serverList: ColonyListInterface) {
-        ServerList.value.ColonyList = serverList
+    function updateAllData(serverList: NamespaceInterface) {
+        ServerList.value.NamespaceList = serverList
+    }
+    //更新ColonyList
+    function updateColonyData(namespace: string, colonyList: ColonyListInterface) {
+        ServerList.value.NamespaceList.set(namespace, colonyList)
     }
     //获取集群名称列表和服务器名称列表
-    function getColonyAndServerNameList(): Map<string, Array<string>> {
+    function getColonyAndServerNameListByNamespace(namespace: string): Map<string, Array<string>> {
         const colonyAndServerNameList = new Map<string, Array<string>>()
-        ServerList.value.getColonyList().forEach((colony) => {
-            colonyAndServerNameList.set(colony, ServerList.value.getServerNameListByColony(colony))
+        ServerList.value.getColonyListByNamespace(namespace).forEach((colony: string) => {
+            colonyAndServerNameList.set(colony,
+                ServerList.value.getServerNameListByNamespaceAndColony(namespace, colony))
         })
         return colonyAndServerNameList
     }
     //获取指定集群和指定服务名下的服务器列表
-    function getServerListByColonyAndServerName(colony: string, serverName: string): Array<ServerInterface> {
-        const serverList = ServerList.value.getServerListByColonyAndServerName(colony, serverName)
-        if (serverList) {
-            return Array.from(serverList)
-        }
-        return []
+    function getServerListByNamespaceAndColonyAndServerName(namespace: string,
+        colony: string, serverName: string): Array<ServerModel> {
+        return ServerList.value.getServerListByNamespaceAndColonyAndServerName(namespace, colony, serverName)
     }
-    return { updateServerList, getColonyAndServerNameList, getServerListByColonyAndServerName }
+
+    return {
+        updateAllData, updateColonyData, getColonyAndServerNameListByNamespace,
+        getServerListByNamespaceAndColonyAndServerName
+    }
 })
 
 // 热更新

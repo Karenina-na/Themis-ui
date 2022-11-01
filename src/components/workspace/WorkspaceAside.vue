@@ -120,17 +120,10 @@ let Colonys: Array<{
 
 //加载初始数据
 onMounted(() => {
-    const data = ServersStore.getColonyAndServerNameList()
     Colonys = new Array<{
         name: String,
         servers: Array<String>
     }>
-    data.forEach((value, keys) => {
-        Colonys.push({
-            name: keys,
-            servers: value
-        })
-    })
 })
 
 </script>

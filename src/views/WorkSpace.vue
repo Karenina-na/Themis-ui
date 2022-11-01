@@ -22,6 +22,7 @@ import WorkspaceHeadVue from '@/components/workspace/WorkspaceHead.vue';
 import { useServersStore } from '@/stores/ServersStore';
 import { GetAllServers } from '@/network/Manager'
 import { ElLoading, ElMessage } from 'element-plus'
+import type { NamespaceInterface } from '@/entity/ServerListModel';
 
 const serversStore = useServersStore();
 
@@ -34,14 +35,14 @@ onMounted(() => {
     })
     GetAllServers().then((res) => {
         ElMessage({
-            message: 'loading success',
+            message: 'loading data success',
             type: 'success',
             duration: 1000,
         })
-        console.log(res.data)
+        handleServersData(res.data)
     }, (err) => {
         ElMessage({
-            message: 'loading error: ' + err,
+            message: 'loading data error: ' + err,
             type: 'error',
             duration: 1000,
         })
@@ -49,6 +50,13 @@ onMounted(() => {
         loadingInstance.close()
     })
 });
+
+//处理请求的数据
+function handleServersData(data: any) {
+    const servers: NamespaceInterface = data;
+    serversStore.updateAllData(servers);
+    console.log(serversStore.getServerListByNamespaceAndColonyAndServerName('A', 'A', 'B'));
+}
 
 </script>
 
