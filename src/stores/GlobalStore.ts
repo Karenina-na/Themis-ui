@@ -30,7 +30,28 @@ export const useGlobalStore = defineStore('GlobalStore', () => {
             password: password.value
         }
     }
-    return { updateToken, updateUsername, updatePassword, getRootMessage }
+
+    const namespace = ref('')
+
+    //切换当前命名空间
+    function updateNamespace(n: string) {
+        namespace.value = n
+    }
+
+    //获取当前命名空间
+    function getNamespace() {
+        return namespace.value
+    }
+
+    //判断是否有命名空间
+    function hasNamespace() {
+        return namespace.value !== ''
+    }
+
+    return {
+        updateToken, updateUsername, updatePassword, getRootMessage,
+        updateNamespace, getNamespace, hasNamespace
+    }
 })
 
 // 热更新
