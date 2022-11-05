@@ -1,4 +1,5 @@
 <template>
+    <ThemeButton class="Login-ThemeButton" />
     <div class="Login-box">
         <h1 class="Login-project-name" id="Login-project-name">Themis</h1>
         <h1 class="Login-sign-title" id="Login-sign-title">Sign in to your account</h1>
@@ -7,9 +8,8 @@
         <el-input v-model="password" ref="focus_password" :prefix-icon="Tools" type="password"
             placeholder="Please input password" show-password clearable maxlength="20" />
         <div class="Login-remember-button">
-            <el-switch class="Login-remember-button-label" v-model="remember_data" size="large" inline-prompt
-                active-text="Yes" inactive-text="No" style="--el-switch-on-color: #626aef;" active-value="true"
-                inactive-value="false" />
+            <el-switch class="Login-remember-button-label" v-model="remember_data" inline-prompt active-text="Yes"
+                inactive-text="No" style="--el-switch-on-color: #626aef;" active-value="true" inactive-value="false" />
             <span class="Login-remember-button-label">Remember me</span>
         </div>
         <div>
@@ -33,6 +33,7 @@ import { useRouter } from 'vue-router'
 import { useGlobalStore } from '@/stores/GlobalStore'
 import { getCookie, setCookie } from '@/util/cookie.js'
 import { LoginNetwork } from '@/network/Manager'
+import ThemeButton from '@/components/ThemeButton.vue'
 
 const router = useRouter()
 const GlobalStore = useGlobalStore()
@@ -76,6 +77,8 @@ const login = () => {
             GlobalStore.updateUsername(account.value)
             GlobalStore.updatePassword(password.value)
             GlobalStore.updateToken(res.data.token)
+
+            //跳转工作台
             router.push({
                 path: '/workspace',
             })
@@ -148,18 +151,29 @@ function buttonShake() {
 <style scoped>
 @import '@/assets/css/shake.css';
 
+/**主题按钮 */
+.Login-ThemeButton {
+    margin: auto;
+    flex: top;
+    width: 100px;
+    text-align: center;
+    transform: scale(1.8);
+    height: 0px;
+    padding-top: 10px;
+}
+
 /**登录盒子 */
 .Login-box {
     text-align: center;
     margin: auto;
     margin-top: 12%;
     user-select: none;
-    width: 600px;
+    width: 400px;
 }
 
 /**图片样式 */
 .Login-project-name {
-    font-size: 100px;
+    font-size: 80px;
     font-weight: 900;
     margin: auto;
     --vt-font-family-base: Quotes, -apple-system, BlinkMacSystemFont,
@@ -168,16 +182,16 @@ function buttonShake() {
 
 /**sign-title */
 .Login-sign-title {
-    font-size: 30px;
+    font-size: 26px;
     font-weight: 1000;
     margin-bottom: 20px;
 }
 
 /**输入框 */
 .Login-box .el-input {
-    font-size: 18px;
+    font-size: 15px;
     height: 50px;
-    width: 500px;
+    width: 400px;
     margin: 4px;
 }
 
@@ -189,18 +203,19 @@ function buttonShake() {
 
 /**remember-button 和 theme-button*/
 .Login-remember-button {
-    margin: 10px 0 12px 70px;
+    margin: 10px 0 12px 30px;
     display: flex;
 }
 
 .Login-emember-button .Login-remember-button-label {
-    font-size: 17px;
+    font-size: 10px;
     padding: 0 10px;
 }
 
 .Login-remember-button span {
-    line-height: 42px;
+    line-height: 30px;
     padding-left: 10px;
+    font-size: 14px;
 }
 
 /*顶部栏 */
@@ -208,8 +223,8 @@ function buttonShake() {
 
 /**登录、重置按钮 */
 .Login-box .Login-button {
-    padding: 0 40px;
-    font-size: 17px;
+    padding: 0 36px;
+    font-size: 14px;
 }
 
 .Login-box #button-login {

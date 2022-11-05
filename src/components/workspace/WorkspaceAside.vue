@@ -11,14 +11,14 @@
             </el-radio-group>
             <el-menu default-active="-1" class="workspace-el-menu-vertical" :collapse="isCollapse">
                 <el-menu-item index="1" @click="getSystemStatus()">
-                    <el-icon :size="24">
+                    <el-icon :size="20">
                         <House />
                     </el-icon>
                     <template #title><span class="workspace-firstlevel-title"
                             :class="{ 'workspace-firstlevel-title-close': isCollapse }">system status</span></template>
                 </el-menu-item>
                 <el-menu-item index="2" @click="getNamespaces()">
-                    <el-icon :size="24">
+                    <el-icon :size="20">
                         <LocationFilled />
                     </el-icon>
                     <template #title><span class="workspace-firstlevel-title"
@@ -26,36 +26,35 @@
                 </el-menu-item>
                 <el-sub-menu index="3">
                     <template #title>
-                        <el-icon :size="24">
+                        <el-icon :size="20">
                             <Monitor />
                         </el-icon>
                         <span class="workspace-firstlevel-title"
                             :class="{ 'workspace-firstlevel-title-close': isCollapse }">servers status</span>
                     </template>
-                    <el-sub-menu :index="'3' + '-' + cindex.toString()" v-for="(colony, cindex) of Colonys"
-                        :key="'3' + '-' + cindex.toString()">
+                    <el-sub-menu :index="String(colonyName)"
+                        v-for="(List, colonyName) of store.GetColoniesAndInstancesNameList()" :key="colonyName">
                         <template #title>
                             <span class="workspace-secondlevel-title">
-                                <span class="workspace-second-colonyname">{{ colony.name }}</span>
+                                <span class="workspace-second-colonyname">{{ colonyName }}</span>
                             </span>
                         </template>
-                        <el-menu-item :index="'3' + '-' + cindex.toString() + '-' + sindex.toString()"
-                            v-for="(server, sindex) of colony.servers"
-                            :key="'3' + '-' + cindex.toString() + '-' + sindex.toString()"
-                            @click="choice_server(cindex, sindex)">
-                            <span class="workspace-third-servername">{{ server }}</span>
+                        <el-menu-item :index="String(colonyName) + '-' + String(serverName)"
+                            v-for="(serverName, sindex) of List" :key="sindex"
+                            @click="choice_server(colonyName, serverName)">
+                            <span class="workspace-third-servername">{{ serverName }}</span>
                         </el-menu-item>
                     </el-sub-menu>
                 </el-sub-menu>
                 <el-menu-item index="4" @click="getOperater()">
-                    <el-icon :size="24">
+                    <el-icon :size="20">
                         <icon-menu />
                     </el-icon>
                     <template #title><span class="workspace-firstlevel-title"
                             :class="{ 'workspace-firstlevel-title-close': isCollapse }">operater</span></template>
                 </el-menu-item>
                 <el-menu-item index="5" @click="getDocument()">
-                    <el-icon :size="24">
+                    <el-icon :size="20">
                         <Document />
                     </el-icon>
                     <template #title><span class="workspace-firstlevel-title"
@@ -76,11 +75,12 @@ import {
     LocationFilled,
 } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
-import { useServersStore } from '@/stores/ServersStore'
+import { SetupServersStore } from '../../stores/SetupServersStore'
+
+let store = SetupServersStore()
 
 const router = useRouter()
-let ServersStore = useServersStore()
-let length = window.screen.height - 50
+let length = document.documentElement.clientHeight - 110
 const isCollapse = ref(true)
 //获取系统状态
 function getSystemStatus() {
@@ -113,17 +113,8 @@ function choice_server(colony: number, name: number) {
     console.log(colony, name)
 }
 
-let Colonys: Array<{
-    name: String,
-    servers: Array<String>
-}>
-
 //加载初始数据
 onMounted(() => {
-    Colonys = new Array<{
-        name: String,
-        servers: Array<String>
-    }>
 })
 
 </script>
@@ -142,7 +133,7 @@ onMounted(() => {
 }
 
 .workspace-expand-and-collapse-button span {
-    font-size: 19px;
+    font-size: 14px;
     font-weight: 800;
 }
 
@@ -153,7 +144,7 @@ onMounted(() => {
 
 /**下拉栏字体样式 */
 .workspace-firstlevel-title {
-    font-size: 18px;
+    font-size: 15px;
     margin-left: 5px;
     font-weight: 500;
 }
@@ -165,13 +156,13 @@ onMounted(() => {
 }
 
 .workspace-second-colonyname {
-    font-size: 16px;
+    font-size: 13px;
     font-weight: 500;
-    margin-left: 40px;
+    margin-left: 30px;
 }
 
 .workspace-third-servername {
-    font-size: 16;
-    margin-left: 40px;
+    font-size: 13px;
+    margin-left: 30px;
 }
 </style>

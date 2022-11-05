@@ -1,8 +1,7 @@
 <template>
     <div class="ThemeButton-box-themeButton">
-        <el-switch v-model="theme" inline-prompt size="large" active-value="dark" inactive-value="light"
-            :active-icon="MoonIcon" active-color="#635c5c" :inactive-icon="SunnyIcon" inactive-color="#dcdfe6"
-            @click="changeTheme" />
+        <el-switch v-model="theme" inline-prompt active-value="dark" inactive-value="light" :active-icon="MoonIcon"
+            active-color="#635c5c" :inactive-icon="SunnyIcon" inactive-color="#dcdfe6" @click="changeTheme" />
     </div>
 </template>
 

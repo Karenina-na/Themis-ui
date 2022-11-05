@@ -7,7 +7,7 @@ export function LoginNetwork(account: string, password: string) {
     const password_enc = Base64.encode(password);
     const config = {
         method: 'post',
-        url: '/operator/login',
+        url: '/operator/manager/login',
         data: {
             "account": username_enc,
             "password": password_enc
@@ -16,11 +16,32 @@ export function LoginNetwork(account: string, password: string) {
     return service(config);
 }
 
-//获取所有服务信息
-export function GetAllServers() {
+//获取所有命名空间名称
+export function GetAllNamespaces() {
     const config = {
         method: 'get',
-        url: '/operator/getInstances'
+        url: '/operator/CURD/getNamespaces'
+    }
+    return service(config)
+}
+
+//获取指定命名空间下的集群和服务名称
+export function GetColoniesAndInstancesByNamespace(namespace: string) {
+    const config = {
+        method: 'post',
+        url: '/operator/CURD/getColoniesInstances',
+        data: {
+            "namespace": namespace
+        }
+    }
+    return service(config)
+}
+
+//获取调度中心信息
+export function GetSchedulerInfo() {
+    const config = {
+        method: 'get',
+        url: '/operator/cluster/getStatus'
     }
     return service(config)
 }
