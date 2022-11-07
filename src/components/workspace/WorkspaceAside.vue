@@ -10,13 +10,25 @@
                 </el-radio-button>
             </el-radio-group>
             <el-menu default-active="-1" class="workspace-el-menu-vertical" :collapse="isCollapse">
-                <el-menu-item index="1" @click="getSystemStatus()">
-                    <el-icon :size="20">
-                        <House />
-                    </el-icon>
-                    <template #title><span class="workspace-firstlevel-title"
-                            :class="{ 'workspace-firstlevel-title-close': isCollapse }">system status</span></template>
-                </el-menu-item>
+
+                <!--system status-->
+                <el-sub-menu index="1" @click="getSystemStatus()">
+                    <template #title>
+                        <el-icon :size="20">
+                            <House />
+                        </el-icon><span class="workspace-firstlevel-title"
+                            :class="{ 'workspace-firstlevel-title-close': isCollapse }">system status</span>
+                    </template>
+                    <el-menu-item :index="'1-' + String(system)" v-for="(system, sindex) of systemStatus" :key="sindex"
+                        @click="choice_system(system)">
+                        <el-icon class="workspace-second-icon">
+                            <DArrowRight :size="16" />
+                        </el-icon>
+                        <span class="workspace-third-system">{{ system }}</span>
+                    </el-menu-item>
+                </el-sub-menu>
+
+                <!--namespace-->
                 <el-menu-item index="2" @click="getNamespaces()">
                     <el-icon :size="20">
                         <LocationFilled />
@@ -24,6 +36,8 @@
                     <template #title><span class="workspace-firstlevel-title"
                             :class="{ 'workspace-firstlevel-title-close': isCollapse }">namespace</span></template>
                 </el-menu-item>
+
+                <!--servers status-->
                 <el-sub-menu index="3">
                     <template #title>
                         <el-icon :size="20">
@@ -32,16 +46,26 @@
                         <span class="workspace-firstlevel-title"
                             :class="{ 'workspace-firstlevel-title-close': isCollapse }">servers status</span>
                     </template>
+
+                    <!--colony status-->
                     <el-sub-menu :index="String(colonyName)"
                         v-for="(List, colonyName) of store.GetColoniesAndInstancesNameList()" :key="colonyName">
                         <template #title>
+                            <el-icon class="workspace-secondlevel-icon">
+                                <ArrowDown :size="16" />
+                            </el-icon>
                             <span class="workspace-secondlevel-title">
                                 <span class="workspace-second-colonyname">{{ colonyName }}</span>
                             </span>
                         </template>
+
+                        <!--server status-->
                         <el-menu-item :index="String(colonyName) + '-' + String(serverName)"
                             v-for="(serverName, sindex) of List" :key="sindex"
                             @click="choice_server(colonyName, serverName)">
+                            <el-icon class="workspace-third-icon">
+                                <ArrowRight :size="14" />
+                            </el-icon>
                             <span class="workspace-third-servername">{{ serverName }}</span>
                         </el-menu-item>
                     </el-sub-menu>
@@ -72,7 +96,7 @@ import {
     Menu as IconMenu,
     House,
     Monitor,
-    LocationFilled,
+    LocationFilled, ArrowDown, ArrowRight, DArrowRight
 } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 import { SetupServersStore } from '../../stores/SetupServersStore'
@@ -108,9 +132,16 @@ function getDocument() {
     })
 }
 
-//查找当前命名空间下的服务器
+//选择当前命名空间下的服务器
 function choice_server(colony: number, name: number) {
     console.log(colony, name)
+}
+
+const systemStatus = ['HostStatus', 'CpuStatus', 'MemStatus', 'DiskStatus', 'NetworkStatus']
+
+//选择系统状态数据
+function choice_system(systemStatus: string) {
+    console.log(systemStatus)
 }
 
 //加载初始数据
@@ -155,14 +186,23 @@ onMounted(() => {
     font-weight: 400;
 }
 
+.workspace-secondlevel-icon {
+    margin-left: 10px;
+}
+
 .workspace-second-colonyname {
     font-size: 13px;
     font-weight: 500;
-    margin-left: 30px;
+    margin-left: 5px;
 }
 
-.workspace-third-servername {
+.workspace-third-icon {
+    margin-left: 10px;
+}
+
+.workspace-third-servername,
+.workspace-third-system {
     font-size: 13px;
-    margin-left: 30px;
+    margin-left: 10px;
 }
 </style>
