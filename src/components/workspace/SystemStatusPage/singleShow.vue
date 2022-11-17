@@ -1,33 +1,37 @@
 <template>
   <div>
     <div>
-      <HostStatus v-if="choice.value===0" :value="host_info"/>
+      <FreshDataButton/>
     </div>
-    <div>
-      <CpuStatus v-if="choice.value===1" :value="cpu_info"/>
+    <div v-if="choice===0">
+      <HostStatus :value="host_info"/>
     </div>
-    <div>
-      <MemStatus v-if="choice.value===2" :value="mem_info"/>
+    <div v-if="choice===1">
+      <CpuStatus :value="cpu_info"/>
     </div>
-    <div>
-      <DiskStatus v-if="choice.value===3" :value="disk_info"/>
+    <div v-if="choice===2">
+      <MemStatus :value="mem_info"/>
     </div>
-    <div>
-      <NetStatus v-if="choice.value===4" :value="net_info"/>
+    <div v-if="choice===3">
+      <DiskStatus :value="disk_info"/>
     </div>
-    <div>
-      <PoolStatus v-if="choice.value===5" :value="pool_info"/>
+    <div v-if="choice===4">
+      <NetStatus :value="net_info"/>
+    </div>
+    <div v-if="choice===5">
+      <PoolStatus :value="pool_info"/>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import HostStatus from './HostStatus.vue'
-import CpuStatus from './CpuStatus.vue'
-import MemStatus from './MemStatus.vue'
-import DiskStatus from './DiskStatus.vue'
-import NetStatus from './NetStatus.vue'
-import PoolStatus from './PoolStatus.vue'
+import FreshDataButton from '../SystemStatusPage/FreshDataButton.vue'
+import HostStatus from './SystemComponents/HostStatus.vue'
+import CpuStatus from './SystemComponents/CpuStatus.vue'
+import MemStatus from './SystemComponents/MemStatus.vue'
+import DiskStatus from './SystemComponents/DiskStatus.vue'
+import NetStatus from './SystemComponents/NetStatus.vue'
+import PoolStatus from './SystemComponents/PoolStatus.vue'
 import {useRoute} from 'vue-router'
 import {onMounted, ref, watchEffect} from "vue";
 import {SetupServersStore} from "@/stores/SetupServersStore";

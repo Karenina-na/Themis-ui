@@ -1,5 +1,8 @@
 <template>
   <div>
+    <FreshDataButton/>
+  </div>
+  <div>
     <HostStatus :value="host_info"/>
   </div>
   <div>
@@ -20,13 +23,14 @@
 </template>
 
 <script lang="ts" setup>
+import FreshDataButton from '../SystemStatusPage/FreshDataButton.vue'
 import {onMounted, ref} from 'vue';
-import HostStatus from './HostStatus.vue'
-import CpuStatus from './CpuStatus.vue'
-import MemStatus from './MemStatus.vue'
-import DiskStatus from './DiskStatus.vue'
-import NetStatus from './NetStatus.vue'
-import PoolStatus from './PoolStatus.vue'
+import HostStatus from './SystemComponents/HostStatus.vue'
+import CpuStatus from './SystemComponents/CpuStatus.vue'
+import MemStatus from './SystemComponents/MemStatus.vue'
+import DiskStatus from './SystemComponents/DiskStatus.vue'
+import NetStatus from './SystemComponents/NetStatus.vue'
+import PoolStatus from './SystemComponents/PoolStatus.vue'
 import {SetupServersStore} from '@/stores/SetupServersStore';
 
 const store = SetupServersStore()

@@ -187,7 +187,7 @@ function choice_system(status: string) {
   })
 }
 
-const systemStatus = ['HostStatus', 'CpuStatus', 'MemStatus', 'DiskStatus', 'NetworkStatus', 'PoolStatus', 'SystemStatus']
+const systemStatus = ['SystemStatus', 'HostStatus', 'CpuStatus', 'MemStatus', 'DiskStatus', 'NetworkStatus', 'PoolStatus']
 
 //加载初始数据
 onMounted(() => {
