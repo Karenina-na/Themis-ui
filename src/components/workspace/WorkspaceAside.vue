@@ -1,148 +1,193 @@
 <template>
-    <el-scrollbar :height="length">
-        <div class="workspace-aside-background">
-            <el-radio-group v-model="isCollapse" style="margin-bottom: 20px" class="workspace-expand-and-collapse">
-                <el-radio-button :label="false" size="large" class="workspace-expand-and-collapse-button">
-                    <span>expand</span>
-                </el-radio-button>
-                <el-radio-button :label="true" size="large" class="workspace-expand-and-collapse-button">
-                    <span>collapse</span>
-                </el-radio-button>
-            </el-radio-group>
-            <el-menu default-active="-1" class="workspace-el-menu-vertical" :collapse="isCollapse">
+  <el-scrollbar :height="length">
+    <div class="workspace-aside-background">
+      <el-radio-group v-model="isCollapse" class="workspace-expand-and-collapse" style="margin-bottom: 20px">
+        <el-radio-button :label="false" class="workspace-expand-and-collapse-button" size="large">
+          <span>expand</span>
+        </el-radio-button>
+        <el-radio-button :label="true" class="workspace-expand-and-collapse-button" size="large">
+          <span>collapse</span>
+        </el-radio-button>
+      </el-radio-group>
+      <el-menu :collapse="isCollapse" class="workspace-el-menu-vertical" default-active="-1">
 
-                <!--system status-->
-                <el-sub-menu index="1" @click="getSystemStatus()">
-                    <template #title>
-                        <el-icon :size="20">
-                            <House />
-                        </el-icon><span class="workspace-firstlevel-title"
-                            :class="{ 'workspace-firstlevel-title-close': isCollapse }">system status</span>
-                    </template>
-                    <el-menu-item :index="'1-' + String(system)" v-for="(system, sindex) of systemStatus" :key="sindex"
+        <!--system status-->
+        <el-sub-menu index="1" @mouseenter.once="Load_System_Status()">
+          <template #title>
+            <el-icon :size="20">
+              <House/>
+            </el-icon>
+            <span :class="{ 'workspace-first-level-title-close': isCollapse }"
+                  class="workspace-first-level-title">system status</span>
+          </template>
+          <el-menu-item v-for="(system, index) of systemStatus" :key="index" :index="'1-' + String(system)"
                         @click="choice_system(system)">
-                        <el-icon class="workspace-second-icon">
-                            <DArrowRight :size="16" />
-                        </el-icon>
-                        <span class="workspace-third-system">{{ system }}</span>
-                    </el-menu-item>
-                </el-sub-menu>
+            <el-icon class="workspace-second-icon">
+              <DArrowRight :size="16"/>
+            </el-icon>
+            <span class="workspace-third-system">{{ system }}</span>
+          </el-menu-item>
+        </el-sub-menu>
 
-                <!--namespace-->
-                <el-menu-item index="2" @click="getNamespaces()">
-                    <el-icon :size="20">
-                        <LocationFilled />
-                    </el-icon>
-                    <template #title><span class="workspace-firstlevel-title"
-                            :class="{ 'workspace-firstlevel-title-close': isCollapse }">namespace</span></template>
-                </el-menu-item>
+        <!--namespace-->
+        <el-menu-item index="2" @click="getNamespaces()">
+          <el-icon :size="20">
+            <LocationFilled/>
+          </el-icon>
+          <template #title><span :class="{ 'workspace-first-level-title-close': isCollapse }"
+                                 class="workspace-first-level-title">namespace</span></template>
+        </el-menu-item>
 
-                <!--servers status-->
-                <el-sub-menu index="3">
-                    <template #title>
-                        <el-icon :size="20">
-                            <Monitor />
-                        </el-icon>
-                        <span class="workspace-firstlevel-title"
-                            :class="{ 'workspace-firstlevel-title-close': isCollapse }">servers status</span>
-                    </template>
+        <!--servers status-->
+        <el-sub-menu index="3">
+          <template #title>
+            <el-icon :size="20">
+              <Monitor/>
+            </el-icon>
+            <span :class="{ 'workspace-first-level-title-close': isCollapse }"
+                  class="workspace-first-level-title">servers status</span>
+          </template>
 
-                    <!--colony status-->
-                    <el-sub-menu :index="String(colonyName)"
-                        v-for="(List, colonyName) of store.GetColoniesAndInstancesNameList()" :key="colonyName">
-                        <template #title>
-                            <el-icon class="workspace-secondlevel-icon">
-                                <ArrowDown :size="16" />
-                            </el-icon>
-                            <span class="workspace-secondlevel-title">
-                                <span class="workspace-second-colonyname">{{ colonyName }}</span>
+          <!--colony status-->
+          <el-sub-menu v-for="(List, colonyName) of Colonies"
+                       :key="colonyName" :index="String(colonyName)">
+            <template #title>
+              <el-icon class="workspace-second-level-icon">
+                <ArrowDown :size="16"/>
+              </el-icon>
+              <span class="workspace-second-level-title">
+                                <span class="workspace-second-colonyName">{{ colonyName }}</span>
                             </span>
-                        </template>
+            </template>
 
-                        <!--server status-->
-                        <el-menu-item :index="String(colonyName) + '-' + String(serverName)"
-                            v-for="(serverName, sindex) of List" :key="sindex"
-                            @click="choice_server(colonyName, serverName)">
-                            <el-icon class="workspace-third-icon">
-                                <ArrowRight :size="14" />
-                            </el-icon>
-                            <span class="workspace-third-servername">{{ serverName }}</span>
-                        </el-menu-item>
-                    </el-sub-menu>
-                </el-sub-menu>
-                <el-menu-item index="4" @click="getOperater()">
-                    <el-icon :size="20">
-                        <icon-menu />
-                    </el-icon>
-                    <template #title><span class="workspace-firstlevel-title"
-                            :class="{ 'workspace-firstlevel-title-close': isCollapse }">operater</span></template>
-                </el-menu-item>
-                <el-menu-item index="5" @click="getDocument()">
-                    <el-icon :size="20">
-                        <Document />
-                    </el-icon>
-                    <template #title><span class="workspace-firstlevel-title"
-                            :class="{ 'workspace-firstlevel-title-close': isCollapse }">document</span></template>
-                </el-menu-item>
-            </el-menu>
-        </div>
-    </el-scrollbar>
+            <!--server status-->
+            <el-menu-item v-for="(serverName, s_index) of List"
+                          :key="s_index" :index="String(colonyName) + '-' + String(serverName)"
+                          @click="choice_server(colonyName, serverName)">
+              <el-icon class="workspace-third-icon">
+                <ArrowRight :size="14"/>
+              </el-icon>
+              <span class="workspace-third-servername">{{ serverName }}</span>
+            </el-menu-item>
+          </el-sub-menu>
+        </el-sub-menu>
+
+        <!--operator status-->
+        <el-menu-item index="4" @click="getOperator()">
+          <el-icon :size="20">
+            <icon-menu/>
+          </el-icon>
+          <template #title><span :class="{ 'workspace-first-level-title-close': isCollapse }"
+                                 class="workspace-first-level-title">operator</span></template>
+        </el-menu-item>
+
+        <!--document status-->
+        <el-menu-item index="5" @click="getDocument()">
+          <el-icon :size="20">
+            <Document/>
+          </el-icon>
+          <template #title><span :class="{ 'workspace-first-level-title-close': isCollapse }"
+                                 class="workspace-first-level-title">document</span></template>
+        </el-menu-item>
+      </el-menu>
+    </div>
+  </el-scrollbar>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted } from 'vue'
+<script lang="ts" setup>
+import {onMounted, ref, watchEffect} from 'vue'
 import {
-    Document,
-    Menu as IconMenu,
-    House,
-    Monitor,
-    LocationFilled, ArrowDown, ArrowRight, DArrowRight
+  ArrowDown,
+  ArrowRight,
+  DArrowRight,
+  Document,
+  House,
+  LocationFilled,
+  Menu as IconMenu,
+  Monitor
 } from '@element-plus/icons-vue'
-import { useRouter } from 'vue-router'
-import { SetupServersStore } from '../../stores/SetupServersStore'
+import {useRouter} from 'vue-router'
+import {SetupServersStore} from '@/stores/SetupServersStore'
+import {GetSchedulerInfo} from "@/network/Manager";
+import {ElMessage} from "element-plus";
 
 let store = SetupServersStore()
+const Colonies = ref()
+
+//监控集群数据变化
+watchEffect(() => {
+  Colonies.value = store.GetColoniesAndInstancesNameList()
+})
 
 const router = useRouter()
 let length = document.documentElement.clientHeight - 110
 const isCollapse = ref(true)
-//获取系统状态
-function getSystemStatus() {
-    router.push('/workspace/system')
-}
 
 //获取命名空间
 function getNamespaces() {
-    router.push({
-        path: '/workspace/namespace',
-    })
+  router.push({
+    path: '/workspace/namespace',
+  })
 }
 
 //操作页面
-function getOperater() {
-    router.push({
-        path: '/workspace/operater',
-    })
+function getOperator() {
+  router.push({
+    path: '/workspace/operator',
+  })
 }
 
 //文档页面
 function getDocument() {
-    router.push({
-        path: '/workspace/document',
-    })
+  router.push({
+    path: '/workspace/document',
+  })
 }
 
 //选择当前命名空间下的服务器
 function choice_server(colony: number, name: number) {
-    console.log(colony, name)
+  console.log(colony, name)
 }
 
-const systemStatus = ['HostStatus', 'CpuStatus', 'MemStatus', 'DiskStatus', 'NetworkStatus']
-
-//选择系统状态数据
-function choice_system(systemStatus: string) {
-    console.log(systemStatus)
+//加载系统状态
+function Load_System_Status() {
+  GetSchedulerInfo().then((res) => {
+    const status = new Map()
+    status.set('host_info', res.data.host_info)
+    status.set('cpu_info', res.data.cpu_info)
+    status.set('mem_info', res.data.mem_info)
+    status.set('disk_info', res.data.disk_info)
+    status.set('net_info', res.data.net_info)
+    status.set('pool_info', {
+      core_num: res.data.pool_core_num,
+      max_num: res.data.pool_max_num,
+      activate_num: res.data.pool_activate_num,
+      job_num: res.data.pool_job_num,
+    })
+    store.SetSystemStatus(status)
+  }, (err) => {
+    ElMessage({
+      message: 'loading data error: ' + err,
+      type: 'error',
+      duration: 1000,
+    })
+  })
 }
+
+//选择查看的系统环境
+function choice_system(status: string) {
+  if (status === "SystemStatus") {
+    router.push({
+      path: '/workspace/system/status',
+    })
+    return
+  }
+  router.push({
+    path: '/workspace/system/s/' + status,
+  })
+}
+
+const systemStatus = ['HostStatus', 'CpuStatus', 'MemStatus', 'DiskStatus', 'NetworkStatus', 'PoolStatus', 'SystemStatus']
 
 //加载初始数据
 onMounted(() => {
@@ -152,57 +197,57 @@ onMounted(() => {
 <style scoped>
 /**背景 */
 .workspace-aside-background {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 }
 
 /** 下拉栏顶部按钮*/
 .workspace-expand-and-collapse {
-    width: 100%;
-    display: flex;
-    justify-content: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .workspace-expand-and-collapse-button span {
-    font-size: 14px;
-    font-weight: 800;
+  font-size: 14px;
+  font-weight: 800;
 }
 
 /**垂直下拉栏 */
 .workspace-el-menu-vertical:not(.el-menu--collapse) {
-    width: 100%;
+  width: 100%;
 }
 
 /**下拉栏字体样式 */
-.workspace-firstlevel-title {
-    font-size: 15px;
-    margin-left: 5px;
-    font-weight: 500;
+.workspace-first-level-title {
+  font-size: 15px;
+  margin-left: 5px;
+  font-weight: 500;
 }
 
 /**下拉栏收缩字体样式 */
-.workspace-firstlevel-title-close {
-    font-size: 15px;
-    font-weight: 400;
+.workspace-first-level-title-close {
+  font-size: 15px;
+  font-weight: 400;
 }
 
-.workspace-secondlevel-icon {
-    margin-left: 10px;
+.workspace-second-level-icon {
+  margin-left: 10px;
 }
 
-.workspace-second-colonyname {
-    font-size: 13px;
-    font-weight: 500;
-    margin-left: 5px;
+.workspace-second-colonyName {
+  font-size: 13px;
+  font-weight: 500;
+  margin-left: 5px;
 }
 
 .workspace-third-icon {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
 .workspace-third-servername,
 .workspace-third-system {
-    font-size: 13px;
-    margin-left: 10px;
+  font-size: 13px;
+  margin-left: 10px;
 }
 </style>

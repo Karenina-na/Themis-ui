@@ -1,11 +1,54 @@
 <template>
-$END$
+  <div>
+    <HostStatus :value="host_info"/>
+  </div>
+  <div>
+    <CpuStatus :value="cpu_info"/>
+  </div>
+  <div>
+    <MemStatus :value="mem_info"/>
+  </div>
+  <div>
+    <DiskStatus :value="disk_info"/>
+  </div>
+  <div>
+    <NetStatus :value="net_info"/>
+  </div>
+  <div>
+    <PoolStatus :value="pool_info"/>
+  </div>
 </template>
 
-<script>
-export default {
-name: "allShow.vue"
-}
+<script lang="ts" setup>
+import {onMounted, ref} from 'vue';
+import HostStatus from './HostStatus.vue'
+import CpuStatus from './CpuStatus.vue'
+import MemStatus from './MemStatus.vue'
+import DiskStatus from './DiskStatus.vue'
+import NetStatus from './NetStatus.vue'
+import PoolStatus from './PoolStatus.vue'
+import {SetupServersStore} from '@/stores/SetupServersStore';
+
+const store = SetupServersStore()
+
+let host_info = ref()
+let cpu_info = ref()
+let mem_info = ref()
+let disk_info = ref()
+let net_info = ref()
+let pool_info = ref()
+
+onMounted(() => {
+  const status = store.GetSystemStatus()
+  host_info.value = status.get('host_info')
+  cpu_info.value = status.get('cpu_info')
+  mem_info.value = status.get('mem_info')
+  disk_info.value = status.get('disk_info')
+  net_info.value = status.get('net_info')
+  pool_info.value = status.get('pool_info')
+})
+
+
 </script>
 
 <style scoped>

@@ -1,24 +1,24 @@
-import { defineStore, acceptHMRUpdate } from 'pinia'
-import { ref } from 'vue';
+import {acceptHMRUpdate, defineStore} from 'pinia'
+import {ref} from 'vue';
 
 export const SetupServersStore = defineStore('SetupServersStore', () => {
 
     //全局可用命名空间列表名称
-    let NamespacesList: Array<string> = [];
+    const NamespacesList = ref(new Array<string>);
 
     // 获取命名空间名称列表
     function GetNamespaceNameList() {
-        return NamespacesList
+        return NamespacesList.value;
     }
 
     // 设置命名空间名称列表
     function SetNamespaceNameList(list: string[]) {
-        NamespacesList = list
+        NamespacesList.value = list
     }
 
     // 长度
     function GetNamespaceNameListLength() {
-        return NamespacesList.length
+        return NamespacesList.value.length
     }
 
     //选取的命名空间
@@ -47,10 +47,24 @@ export const SetupServersStore = defineStore('SetupServersStore', () => {
         ColoniesAndInstancesList.value = list
     }
 
+    //系统状态
+    const SystemStatus = ref(new Map());
+
+    //获取系统状态
+    function GetSystemStatus() {
+        return SystemStatus.value
+    }
+
+    //设置系统状态
+    function SetSystemStatus(status: Map<string, any>) {
+        SystemStatus.value = status
+    }
+
     return {
         GetNamespaceNameList, SetNamespaceNameList, GetNamespaceNameListLength,
         GetNamespace, SetNamespace,
-        GetColoniesAndInstancesNameList, SetColoniesAndInstancesNameList
+        GetColoniesAndInstancesNameList, SetColoniesAndInstancesNameList,
+        GetSystemStatus, SetSystemStatus
     }
 })
 

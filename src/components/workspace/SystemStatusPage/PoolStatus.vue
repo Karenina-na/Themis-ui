@@ -1,11 +1,12 @@
 <template>
-$END$
+  <div>
+    {{ props.value }}
+  </div>
 </template>
 
-<script>
-export default {
-name: "PoolStatus"
-}
+<script lang="ts" setup>
+
+const props = defineProps(['value'])
 </script>
 
 <style scoped>
