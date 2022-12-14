@@ -1,8 +1,11 @@
 /*暗黑色调*/
 html.dark {
-    transition: all 0.4s;
-    background-color: #1e1e1e;
+    transition: all 0.2s;
+    background-color: #1d1e1f;
     color: #fff;
+    --el-transition-duration: 0.2s;
+    --el-transition-duration-fast: 0.2s;
+    --el-transition-all: 0.2s;
 }
 
 /*登录页面标题*/

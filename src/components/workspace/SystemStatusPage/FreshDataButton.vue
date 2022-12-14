@@ -50,7 +50,7 @@ function FreshData() {
 <style scoped>
 button {
   padding: 0.8em 1.8em;
-  border: 2px solid #17C3B2;
+  border: 2px solid #48cae4;
   position: relative;
   overflow: hidden;
   background-color: transparent;
@@ -60,7 +60,7 @@ button {
   transition: .3s;
   z-index: 1;
   font-family: inherit;
-  color: #17C3B2;
+  color: #48cae4;
 }
 
 button::before {
@@ -71,7 +71,7 @@ button::before {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) rotate(45deg);
-  background: #17C3B2;
+  background: #48cae4;
   transition: .5s ease;
   display: block;
   z-index: -1;

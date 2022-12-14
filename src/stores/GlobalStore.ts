@@ -1,5 +1,5 @@
-import { defineStore, acceptHMRUpdate } from 'pinia'
-import { ref } from 'vue'
+import {acceptHMRUpdate, defineStore} from 'pinia'
+import {ref} from 'vue'
 //全局可用信息
 export const useGlobalStore = defineStore('GlobalStore', () => {
 
@@ -31,26 +31,21 @@ export const useGlobalStore = defineStore('GlobalStore', () => {
         }
     }
 
-    const namespace = ref('')
+    const Theme = ref('')
 
-    //切换当前命名空间
-    function updateNamespace(n: string) {
-        namespace.value = n
+    //设置全局主题
+    function setTheme(val: string) {
+        Theme.value = val;
     }
 
-    //获取当前命名空间
-    function getNamespace() {
-        return namespace.value
-    }
-
-    //判断是否有命名空间
-    function hasNamespace() {
-        return namespace.value !== ''
+    //获取全局主题
+    function getTheme() {
+        return Theme.value;
     }
 
     return {
         updateToken, updateUsername, updatePassword, getRootMessage,
-        updateNamespace, getNamespace, hasNamespace
+        setTheme, getTheme
     }
 })
 

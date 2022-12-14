@@ -1,8 +1,11 @@
 /*明亮色调*/
 html.light {
-    transition: all 0.4s;
+    transition: all 0.2s;
     background-color: #fff;
     color: #000;
+    --el-transition-duration: 0.2s;
+    --el-transition-duration-fast: 0.2s;
+    --el-transition-all: 0.2s;
 }
 
 /*登陆页面标题*/

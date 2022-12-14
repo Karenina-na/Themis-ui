@@ -1,12 +1,12 @@
 <template>
-  <div>
-    <div>
+  <div class="singleShow">
+    <div class="single_freshData">
       <FreshDataButton/>
     </div>
     <div v-if="choice===0">
       <HostStatus :value="host_info"/>
     </div>
-    <div v-if="choice===1">
+    <div v-if="choice===1" class="Choice_Status">
       <CpuStatus :value="cpu_info"/>
     </div>
     <div v-if="choice===2">
@@ -35,6 +35,8 @@ import PoolStatus from './SystemComponents/PoolStatus.vue'
 import {useRoute} from 'vue-router'
 import {onMounted, ref, watchEffect} from "vue";
 import {SetupServersStore} from "@/stores/SetupServersStore";
+import {GetSchedulerInfo} from "@/network/Manager";
+import {ElMessage} from "element-plus";
 
 const store = SetupServersStore()
 
@@ -52,6 +54,30 @@ const props = useRoute()
 
 onMounted(() => {
   const status = store.GetSystemStatus()
+  if (status) {
+    //加载系统状态
+    GetSchedulerInfo().then((res) => {
+      const status = new Map()
+      status.set('host_info', res.data.host_info)
+      status.set('cpu_info', res.data.cpu_info)
+      status.set('mem_info', res.data.mem_info)
+      status.set('disk_info', res.data.disk_info)
+      status.set('net_info', res.data.net_info)
+      status.set('pool_info', {
+        core_num: res.data.pool_core_num,
+        max_num: res.data.pool_max_num,
+        activate_num: res.data.pool_activate_num,
+        job_num: res.data.pool_job_num,
+      })
+      store.SetSystemStatus(status)
+    }, (err) => {
+      ElMessage({
+        message: 'loading data error: ' + err,
+        type: 'error',
+        duration: 1000,
+      })
+    })
+  }
   host_info.value = status.get('host_info')
   cpu_info.value = status.get('cpu_info')
   mem_info.value = status.get('mem_info')
@@ -60,6 +86,18 @@ onMounted(() => {
   pool_info.value = status.get('pool_info')
 })
 
+//监测系统状态变化
+watchEffect(() => {
+  const status = store.GetSystemStatus()
+  host_info.value = status.get('host_info')
+  cpu_info.value = status.get('cpu_info')
+  mem_info.value = status.get('mem_info')
+  disk_info.value = status.get('disk_info')
+  net_info.value = status.get('net_info')
+  pool_info.value = status.get('pool_info')
+})
+
+//监听路由参数变化
 watchEffect(() => {
   switch (props.params.choice) {
     case 'HostStatus':
@@ -86,5 +124,21 @@ watchEffect(() => {
 </script>
 
 <style scoped>
+/*总布局*/
+.singleShow {
+  width: 100%;
+}
 
+/*刷新按钮*/
+.single_freshData {
+  margin-bottom: 20px;
+  margin-top: 10px;
+  width: 100%;
+  text-align: right;
+}
+
+/*选择的信息页面布局*/
+.Choice_Status {
+  margin: auto;
+}
 </style>

@@ -36,5 +36,6 @@ import WorkspaceHeadVue from '@/components/workspace/WorkspaceHead.vue';</script
 /**下部分容器 */
 .workspace-container {
   margin-right: 15px;
+  width: 100%;
 }
 </style>
