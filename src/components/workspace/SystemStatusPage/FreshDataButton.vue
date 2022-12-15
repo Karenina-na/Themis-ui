@@ -6,7 +6,7 @@
 
 <script lang="ts" setup>
 import {GetSchedulerInfo} from "@/network/Manager";
-import {ElMessage} from "element-plus";
+import {ElMessage, ElNotification} from "element-plus";
 import {SetupServersStore} from '@/stores/SetupServersStore'
 
 let store = SetupServersStore()
@@ -18,9 +18,11 @@ function FreshData() {
   }
   //设置定时器防止刷新过快
   timer = setTimeout(() => {
-    ElMessage({
+    ElNotification({
       type: 'success',
-      message: 'refresh data',
+      title: 'Fresh Data',
+      message: 'success',
+      duration: 2000,
     })
     GetSchedulerInfo().then((res) => {
       const status = new Map()

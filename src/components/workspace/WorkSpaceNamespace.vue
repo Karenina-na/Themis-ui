@@ -26,6 +26,7 @@ watchEffect(() => {
   namespaces.value = store.GetNamespaceNameList()
 })
 
+//初始化
 onMounted(() => {
   GetNamespace()
 });
@@ -98,8 +99,9 @@ function GetNamespace() {
       type: 'error',
       duration: 1000,
     })
+  }).finally(() => {
+    useLoading().endLoading()
   })
-  useLoading().endLoading()
 }
 
 </script>

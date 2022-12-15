@@ -12,7 +12,8 @@
         "./src/*"
       ]
     },
-    "types": [ // <--- This is the important part   process
+    "types": [
+      // <--- This is the important part   process
       "node"
     ]
   },

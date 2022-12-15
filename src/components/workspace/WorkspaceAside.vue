@@ -12,7 +12,7 @@
       <el-menu :collapse="isCollapse" class="workspace-el-menu-vertical" default-active="-1">
 
         <!--system status-->
-        <el-sub-menu index="1" @mouseenter.once="Load_System_Status()">
+        <el-sub-menu index="1">
           <template #title>
             <el-icon :size="20">
               <House/>
@@ -108,8 +108,6 @@ import {
 } from '@element-plus/icons-vue'
 import {useRouter} from 'vue-router'
 import {SetupServersStore} from '@/stores/SetupServersStore'
-import {GetSchedulerInfo} from "@/network/Manager";
-import {ElMessage} from "element-plus";
 
 let store = SetupServersStore()
 const Colonies = ref()
@@ -149,41 +147,19 @@ function choice_server(colony: number, name: number) {
   console.log(colony, name)
 }
 
-//加载系统状态
-function Load_System_Status() {
-  GetSchedulerInfo().then((res) => {
-    const status = new Map()
-    status.set('host_info', res.data.host_info)
-    status.set('cpu_info', res.data.cpu_info)
-    status.set('mem_info', res.data.mem_info)
-    status.set('disk_info', res.data.disk_info)
-    status.set('net_info', res.data.net_info)
-    status.set('pool_info', {
-      core_num: res.data.pool_core_num,
-      max_num: res.data.pool_max_num,
-      activate_num: res.data.pool_activate_num,
-      job_num: res.data.pool_job_num,
-    })
-    store.SetSystemStatus(status)
-  }, (err) => {
-    ElMessage({
-      message: 'loading data error: ' + err,
-      type: 'error',
-      duration: 1000,
-    })
-  })
-}
-
 //选择查看的系统环境
 function choice_system(status: string) {
   if (status === "SystemStatus") {
     router.push({
-      path: '/workspace/system/status',
+      path: '/workspace/system',
     })
     return
   }
   router.push({
-    path: '/workspace/system/s/' + status,
+    path: '/workspace/system',
+    query: {
+      status: status
+    }
   })
 }
 

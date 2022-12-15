@@ -25,15 +25,6 @@ const router = createRouter({
                     path: 'system',
                     name: 'system',
                     component: () => import('@/components/workspace/WorkspaceSystemStatus.vue'),
-                    children: [{
-                        path: 'status',
-                        name: 'all',
-                        component: () => import('@/components/workspace/SystemStatusPage/allShow.vue')
-                    }, {
-                        path: 's/:choice',
-                        name: 'singleShow',
-                        component: () => import('@/components/workspace/SystemStatusPage/singleShow.vue')
-                    },]
                 },
 
                 {

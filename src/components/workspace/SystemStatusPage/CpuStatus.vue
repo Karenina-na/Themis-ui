@@ -10,15 +10,19 @@
         <div class="CPU_info_name">CPU Cores Num:
           <div class="CPU_info_value">{{ cpu_info.cpu_core_num }}</div>
         </div>
+        <hr/>
         <div class="CPU_info_name">CPU Frequency:
-          <div class="CPU_info_value">{{ cpu_info.cpu_frequency }}</div>
+          <div class="CPU_info_value">{{ cpu_info.cpu_frequency }} GHz</div>
         </div>
+        <hr/>
         <div class="CPU_info_name">CPU Vendor ID:
           <div class="CPU_info_value">{{ cpu_info.cpu_vendor_id }}</div>
         </div>
+        <hr/>
         <div class="CPU_info_name">CPU Physical ID:
           <div class="CPU_info_value">{{ cpu_info.cpu_physical_id }}</div>
         </div>
+        <hr/>
       </el-card>
     </div>
     <div class="Right_container">
@@ -42,27 +46,31 @@ const store = useGlobalStore()
 onMounted(() => {
   if (props.value) {
     let CPU_usage = []
+    let CPU_name = []
     for (let i = 0; i < props.value.length; i++) {
       CPU_usage.push(props.value[i].cpu_usage)
+      CPU_name.push(props.value[i].cpu_name)
     }
-    CPU_Usage(CPU_usage);
+    CPU_Usage(CPU_usage, CPU_name);
   } else {
-    CPU_Usage([0]);
+    CPU_Usage([0], ['Not Found']);
   }
 });
 
-//销毁图标
+//销毁chart
 onUnmounted(() => {
   CPU_Usage_Chart.dispose();
 });
 
 //侦测器监听父组件传参
-watch(props, (newVal) => {
+watch(props, () => {
   let CPU_usage = []
+  let CPU_name = []
   for (let i = 0; i < props.value.length; i++) {
-    CPU_usage.push(newVal.value[i].cpu_usage)
+    CPU_usage.push(props.value[i].cpu_usage)
+    CPU_name.push(props.value[i].cpu_name)
   }
-  CPU_Usage(CPU_usage)
+  CPU_Usage(CPU_usage, CPU_name);
 });
 
 //监听Theme变化
@@ -72,29 +80,31 @@ watch(store.getTheme, () => {
   }
   CPU_Usage_Chart.dispose();
   let CPU_usage = []
+  let CPU_name = []
   for (let i = 0; i < props.value.length; i++) {
     CPU_usage.push(props.value[i].cpu_usage)
+    CPU_name.push(props.value[i].cpu_name)
   }
-  CPU_Usage(CPU_usage);
+  CPU_Usage(CPU_usage, CPU_name);
 });
 
 //绘制CPU使用率
-const CPU_Usage = function (usage: Array<number>) {
+const CPU_Usage = function (usage: Array<number>, name: Array<string>) {
   if (store.getTheme() == "light") {
     echarts.registerTheme('LightTheme', LightTheme)
-    CPU_Usage_Chart = echarts.init(document.getElementById("CPU_Usage_Chart")!, 'LightTheme', {height: 300 * usage.length});
+    CPU_Usage_Chart = echarts.init(document.getElementById("CPU_Usage_Chart")!, 'LightTheme', {height: 322 * usage.length - 22});
   } else {
     echarts.registerTheme('DarkTheme', DarkTheme)
-    CPU_Usage_Chart = echarts.init(document.getElementById("CPU_Usage_Chart")!, 'DarkTheme', {height: 300 * usage.length});
+    CPU_Usage_Chart = echarts.init(document.getElementById("CPU_Usage_Chart")!, 'DarkTheme', {height: 322 * usage.length - 22});
   }
+  //CPU使用率
   let data = []
   for (let i = 0; i < usage.length; i++) {
-    let percent = ((i + 1) / usage.length - i / usage.length) * 60
     data.push({
       name: 'CPU' + (i + 1),
       type: 'pie',
-      radius: '50%',
-      center: ['50%', percent + '%'],
+      radius: 80,
+      center: ['50%', 200 + i * 322],
       stillShowZeroSum: false,
       data: [
         {value: usage[i], name: 'CPU Usage'},
@@ -109,11 +119,22 @@ const CPU_Usage = function (usage: Array<number>) {
       }
     })
   }
+  //CPU名称
+  let title = []
+  title.push({
+    text: 'CPU Usage',
+    left: 'center'
+  })
+  for (let i = 0; i < usage.length; i++) {
+    title.push({
+      subtext: 'CPU Usage: ' + name[i],
+      left: '50%',
+      top: 50 + 322 * i,
+      textAlign: 'center'
+    })
+  }
   CPU_Usage_Chart.setOption({
-    title: {
-      text: 'CPU Usage',
-      left: 'center'
-    },
+    title: title,
     tooltip: {
       trigger: 'item'
     },
@@ -136,7 +157,6 @@ const CPU_Usage = function (usage: Array<number>) {
 .CpuStatus_container {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   padding: 10px;
   width: 1050px;
   margin: auto;
@@ -155,6 +175,7 @@ const CPU_Usage = function (usage: Array<number>) {
   height: 300px;
   border-radius: 6px;
   transition: all 0.3s;
+  margin-bottom: 20px;
 }
 
 .box-card:hover {
@@ -197,6 +218,7 @@ const CPU_Usage = function (usage: Array<number>) {
   border-radius: 2px;
   border: 1px solid #0000001f;
   box-shadow: var(--el-box-shadow-light);
+  margin-bottom: 20px;
 }
 
 #CPU_Usage_Chart:hover {
