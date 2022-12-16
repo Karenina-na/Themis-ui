@@ -1,12 +1,14 @@
 export const LightTheme =
     {
         "color": [
-            "#3fb1e3",
-            "#6be6c1",
-            "#626c91",
-            "#a0a7e6",
-            "#c4ebad",
-            "#96dee8"
+            "#fdbf9c",
+            "#d6f9d1",
+            "#808AF8",
+            "#a7dbf7",
+            "#e9a8f3",
+            "#f6ff85",
+            "#6ce4d8",
+            "#b98efb",
         ],
         "backgroundColor": "#ffffff",
         "textStyle": {},

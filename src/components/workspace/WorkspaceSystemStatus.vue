@@ -4,24 +4,54 @@
       <div class="single_freshData">
         <FreshDataButton/>
       </div>
-      <div v-if="(choice===0 || choice===10)&&host_info!==undefined" class="Choice_Status">
-        <HostStatus :value="host_info"/>
-      </div>
-      <div v-if="(choice===1 || choice===10)&&cpu_info!==undefined" class="Choice_Status">
-        <CpuStatus :value="cpu_info"/>
-      </div>
-      <div v-if="(choice===2 || choice===10)&&mem_info!==undefined" class="Choice_Status">
-        <MemStatus :value="mem_info"/>
-      </div>
-      <div v-if="(choice===3 || choice===10)&&mem_info!==undefined" class="Choice_Status">
-        <DiskStatus :value="disk_info"/>
-      </div>
-      <div v-if="(choice===4 || choice===10)&&mem_info!==undefined" class="Choice_Status">
-        <NetStatus :value="net_info"/>
-      </div>
-      <div v-if="(choice===5 || choice===10)&&mem_info!==undefined" class="Choice_Status">
-        <PoolStatus :value="pool_info"/>
-      </div>
+      <el-divider content-position="center">
+        <span class="status-name">HOST</span>
+      </el-divider>
+      <Transition name="choice_status">
+        <div v-if="(choice===0 || choice===10)&&host_info!==undefined" class="Choice_Status">
+          <HostStatus :value="host_info"/>
+        </div>
+      </Transition>
+      <el-divider content-position="center">
+        <span class="status-name">CPU</span>
+      </el-divider>
+      <Transition name="choice_status">
+        <div v-if="(choice===1 || choice===10)&&cpu_info!==undefined" class="Choice_Status">
+          <CpuStatus :value="cpu_info"/>
+        </div>
+      </Transition>
+      <el-divider content-position="center">
+        <span class="status-name">MEMORY</span>
+      </el-divider>
+      <Transition name="choice_status">
+        <div v-if="(choice===2 || choice===10)&&mem_info!==undefined" class="Choice_Status">
+          <MemStatus :value="mem_info"/>
+        </div>
+      </Transition>
+      <el-divider content-position="center">
+        <span class="status-name">DISK</span>
+      </el-divider>
+      <Transition name="choice_status">
+        <div v-if="(choice===3 || choice===10)&&mem_info!==undefined" class="Choice_Status">
+          <DiskStatus :value="disk_info"/>
+        </div>
+      </Transition>
+      <el-divider content-position="center">
+        <span class="status-name">NET</span>
+      </el-divider>
+      <Transition name="choice_status">
+        <div v-if="(choice===4 || choice===10)&&mem_info!==undefined" class="Choice_Status">
+          <NetStatus :value="net_info"/>
+        </div>
+      </Transition>
+      <el-divider content-position="center">
+        <span class="status-name">COGROUTINE</span>
+      </el-divider>
+      <Transition name="choice_status">
+        <div v-if="(choice===5 || choice===10)&&mem_info!==undefined" class="Choice_Status">
+          <PoolStatus :value="pool_info"/>
+        </div>
+      </Transition>
     </el-scrollbar>
   </div>
 </template>
@@ -141,6 +171,8 @@ function GetSystemStatus() {
 </script>
 
 <style scoped>
+@import "@/assets/css/scale-up-ver-top.css";
+
 /*总布局*/
 .workspaceSystemStatus_box {
   width: 100%;
@@ -149,10 +181,27 @@ function GetSystemStatus() {
 
 /*刷新按钮布局*/
 .single_freshData {
-  height: 40px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
   padding-right: 50px;
+  position: fixed;
+  right: 0;
+  z-index: 100;
 }
+
+/*分割线字段*/
+.status-name {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+/*信息面板过度动画*/
+.choice_status-enter-active,
+.choice_status-active {
+  animation: scale-up-ver-top 0.4s cubic-bezier(0.550, 0.055, 0.675, 0.190) both;
+}
+
+.choice_status-enter-from,
+.choice_status-leave-to {
+  animation: scale-up-ver-top 0.4s cubic-bezier(0.550, 0.055, 0.675, 0.190) both reverse;
+}
+
 </style>

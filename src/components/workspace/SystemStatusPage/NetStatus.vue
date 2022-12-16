@@ -10,10 +10,10 @@
 </template>
 
 <script lang="ts" setup>
-import {onMounted, onUnmounted, watch} from "vue";
+import {onMounted, watch} from "vue";
 import * as echarts from "echarts";
-import {DarkTheme} from "@/assets/json/DarkTheme";
-import {LightTheme} from "@/assets/json/LightTheme";
+import {DarkTheme} from "@/assets/json/Net_echart/DarkTheme";
+import {LightTheme} from "@/assets/json/Net_echart/LightTheme";
 import {useGlobalStore} from "@/stores/GlobalStore";
 
 const props = defineProps(['value'])
@@ -31,12 +31,6 @@ onMounted(() => {
     Bytes_chart([0], [0], ['Not Found'])
     Packets_chart([0], [0], ['Not Found'])
   }
-});
-
-//销毁chart
-onUnmounted(() => {
-  Bytes_Chart.dispose();
-  Packets_Chart.dispose();
 });
 
 //侦测器监听父组件传参
@@ -97,8 +91,9 @@ const Bytes_chart = function (bytes_sent: Array<number>, bytes_recv: Array<numbe
   //Net名称
   let title = []
   title.push({
-    text: 'Net',
-    left: 'center'
+    text: 'bytes information',
+    left: 'center',
+    top: 15,
   })
   for (let i = 0; i < name.length; i++) {
     title.push({
@@ -118,7 +113,8 @@ const Bytes_chart = function (bytes_sent: Array<number>, bytes_recv: Array<numbe
     },
     legend: {
       orient: 'vertical',
-      left: 'left'
+      left: 'left',
+      top: '30',
     },
     series: data,
   });
@@ -161,8 +157,9 @@ const Packets_chart = function (packets_sent: Array<number>, packets_recv: Array
   //Net名称
   let title = []
   title.push({
-    text: 'Net Usage',
-    left: 'center'
+    text: 'packets information',
+    left: 'center',
+    top: 15,
   })
   for (let i = 0; i < name.length; i++) {
     title.push({
@@ -182,7 +179,8 @@ const Packets_chart = function (packets_sent: Array<number>, packets_recv: Array
     },
     legend: {
       orient: 'vertical',
-      left: 'left'
+      left: 'left',
+      top: '30',
     },
     series: data,
   });

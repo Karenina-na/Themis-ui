@@ -28,10 +28,10 @@
 </template>
 
 <script setup lang="ts">
-import {DarkTheme} from "@/assets/json/DarkTheme";
-import {LightTheme} from "@/assets/json/LightTheme";
+import {DarkTheme} from "@/assets/json/Mem_echart/DarkTheme";
+import {LightTheme} from "@/assets/json/Mem_echart/LightTheme";
 
-import {onMounted, onUnmounted, watch} from "vue";
+import {onMounted, watch} from "vue";
 import {useGlobalStore} from "@/stores/GlobalStore";
 import * as echarts from "echarts";
 
@@ -47,11 +47,6 @@ onMounted(() => {
     Mem_Chart(0);
   }
 })
-
-//销毁chart
-onUnmounted(() => {
-  mem_chart.dispose();
-});
 
 //侦测器监听父组件传参
 watch(props, (newVal) => {
@@ -87,8 +82,8 @@ function Mem_Chart(mem_usage: number) {
       center: ['50%', '60%'],
       stillShowZeroSum: false,
       data: [
-        {value: mem_avi, name: 'Memory Usage'},
-        {value: mem_usage, name: 'Memory Idle'},
+        {value: mem_usage, name: 'Mem Usage'},
+        {value: mem_avi, name: 'Mem Idle'},
       ],
       emphasis: {
         itemStyle: {
@@ -102,7 +97,8 @@ function Mem_Chart(mem_usage: number) {
   mem_chart.setOption({
     title: {
       text: 'Memory Usage',
-      left: 'center'
+      left: 'center',
+      top: 15,
     },
     tooltip: {
       trigger: 'item',
@@ -112,7 +108,8 @@ function Mem_Chart(mem_usage: number) {
     },
     legend: {
       orient: 'vertical',
-      left: 'left'
+      left: 'left',
+      top: '30',
     },
     series: data,
   });

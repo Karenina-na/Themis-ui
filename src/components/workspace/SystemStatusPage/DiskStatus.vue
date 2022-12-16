@@ -4,7 +4,7 @@
       <el-card v-for="(Disk_info, index) in props.value" :key="index" class="box-card">
         <template #header>
           <div class="card-header">
-            <span class="Disk_info_title">{{ Disk_info.disk_name }}</span>
+            <span class="Disk_info_title">Disk {{ Disk_info.disk_name }}</span>
           </div>
         </template>
         <div class="Disk_info_name">Disk Size:
@@ -36,10 +36,10 @@
 </template>
 
 <script lang="ts" setup>
-import {onMounted, onUnmounted, watch} from "vue";
+import {onMounted, watch} from "vue";
 import * as echarts from "echarts";
-import {DarkTheme} from "@/assets/json/DarkTheme";
-import {LightTheme} from "@/assets/json/LightTheme";
+import {DarkTheme} from "@/assets/json/Disk_echart/DarkTheme";
+import {LightTheme} from "@/assets/json/Disk_echart/LightTheme";
 import {useGlobalStore} from "@/stores/GlobalStore";
 
 const props = defineProps(['value'])
@@ -56,13 +56,9 @@ onMounted(() => {
   }
 });
 
-//销毁chart
-onUnmounted(() => {
-  Disk_Usage_Chart.dispose();
-});
-
 //侦测器监听父组件传参
 watch(props, () => {
+  Disk_Usage_Chart.dispose();
   let [Disk_usage, Disk_name] = Create_Data()
   Disk_Usage(Disk_usage, Disk_name);
 });
@@ -112,7 +108,8 @@ const Disk_Usage = function (usage: Array<number>, name: Array<string>) {
   let title = []
   title.push({
     text: 'Disk Usage',
-    left: 'center'
+    left: 'center',
+    top: 15,
   })
   for (let i = 0; i < usage.length; i++) {
     title.push({
@@ -125,11 +122,15 @@ const Disk_Usage = function (usage: Array<number>, name: Array<string>) {
   Disk_Usage_Chart.setOption({
     title: title,
     tooltip: {
-      trigger: 'item'
+      trigger: 'item',
+      formatter: (params: any) => {
+        return params.seriesName + "<br>" + params.marker + params.name + ":&nbsp;&nbsp;&nbsp;&nbsp;" + "<span style='font-weight: bold'>" + params.value + "</span>" + " %";
+      },
     },
     legend: {
       orient: 'vertical',
-      left: 'left'
+      left: 'left',
+      top: '30',
     },
     series: data,
   });

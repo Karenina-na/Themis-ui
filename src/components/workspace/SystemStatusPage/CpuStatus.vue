@@ -32,10 +32,10 @@
 </template>
 
 <script lang="ts" setup>
-import {onMounted, onUnmounted, watch} from "vue";
+import {onMounted, watch} from "vue";
 import * as echarts from "echarts";
-import {DarkTheme} from "@/assets/json/DarkTheme";
-import {LightTheme} from "@/assets/json/LightTheme";
+import {DarkTheme} from "@/assets/json/CPU_echart/DarkTheme";
+import {LightTheme} from "@/assets/json/CPU_echart/LightTheme";
 import {useGlobalStore} from "@/stores/GlobalStore";
 
 const props = defineProps(['value'])
@@ -50,11 +50,6 @@ onMounted(() => {
   } else {
     CPU_Usage([0], ['Not Found']);
   }
-});
-
-//销毁chart
-onUnmounted(() => {
-  CPU_Usage_Chart.dispose();
 });
 
 //侦测器监听父组件传参
@@ -112,7 +107,8 @@ const CPU_Usage = function (usage: Array<number>, name: Array<string>) {
   let title = []
   title.push({
     text: 'CPU Usage',
-    left: 'center'
+    left: 'center',
+    top: 15,
   })
   for (let i = 0; i < usage.length; i++) {
     title.push({
@@ -133,7 +129,8 @@ const CPU_Usage = function (usage: Array<number>, name: Array<string>) {
     },
     legend: {
       orient: 'vertical',
-      left: 'left'
+      left: 'left',
+      top: '30',
     },
     series: data,
   });
