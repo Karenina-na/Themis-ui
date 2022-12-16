@@ -55,6 +55,7 @@ onUnmounted(() => {
 
 //侦测器监听父组件传参
 watch(props, (newVal) => {
+  mem_chart.dispose();
   Mem_Chart(newVal.value.mem_usage)
 });
 
@@ -77,6 +78,7 @@ function Mem_Chart(mem_usage: number) {
     mem_chart = echarts.init(document.getElementById("Mem_Usage_Chart")!, 'DarkTheme', {height: 300});
   }
   let mem_avi = 100 - mem_usage;
+  mem_usage = 100 - mem_avi;
   const data = [
     {
       name: "Memory Usage",
@@ -103,7 +105,10 @@ function Mem_Chart(mem_usage: number) {
       left: 'center'
     },
     tooltip: {
-      trigger: 'item'
+      trigger: 'item',
+      formatter: (params: any) => {
+        return params.seriesName + "<br>" + params.marker + params.name + ":&nbsp;&nbsp;&nbsp;&nbsp;" + "<span style='font-weight: bold'>" + params.value + "</span>" + " %";
+      },
     },
     legend: {
       orient: 'vertical',
@@ -137,7 +142,7 @@ function Mem_Chart(mem_usage: number) {
 }
 
 .box-card {
-  width: 480px;
+  width: 500px;
   height: 300px;
   border-radius: 6px;
   transition: all 0.3s;

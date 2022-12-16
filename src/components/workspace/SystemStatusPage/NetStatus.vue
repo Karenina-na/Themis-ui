@@ -1,32 +1,10 @@
 <template>
   <div class="CpuStatus_container">
     <div class="Left_container">
-      <el-card v-for="(cpu_info, index) in props.value" :key="index" class="box-card">
-        <template #header>
-          <div class="card-header">
-            <span class="CPU_info_title">{{ cpu_info.cpu_name }}</span>
-          </div>
-        </template>
-        <div class="CPU_info_name">CPU Cores Num:
-          <div class="CPU_info_value">{{ cpu_info.cpu_core_num }}</div>
-        </div>
-        <hr/>
-        <div class="CPU_info_name">CPU Frequency:
-          <div class="CPU_info_value">{{ cpu_info.cpu_frequency }} GHz</div>
-        </div>
-        <hr/>
-        <div class="CPU_info_name">CPU Vendor ID:
-          <div class="CPU_info_value">{{ cpu_info.cpu_vendor_id }}</div>
-        </div>
-        <hr/>
-        <div class="CPU_info_name">CPU Physical ID:
-          <div class="CPU_info_value">{{ cpu_info.cpu_physical_id }}</div>
-        </div>
-        <hr/>
-      </el-card>
+      <div id="Bytes_Chart" style="width: 500px"/>
     </div>
     <div class="Right_container">
-      <div id="CPU_Usage_Chart" style="width: 500px"/>
+      <div id="Packets_Chart" style="width: 500px"/>
     </div>
   </div>
 </template>
@@ -39,38 +17,38 @@ import {LightTheme} from "@/assets/json/LightTheme";
 import {useGlobalStore} from "@/stores/GlobalStore";
 
 const props = defineProps(['value'])
-let CPU_Usage_Chart: any = null;
+let Bytes_Chart: any = null;
+let Packets_Chart: any = null;
 const store = useGlobalStore()
 
 //初始化
 onMounted(() => {
   if (props.value) {
-    let CPU_usage = []
-    let CPU_name = []
-    for (let i = 0; i < props.value.length; i++) {
-      CPU_usage.push(props.value[i].cpu_usage)
-      CPU_name.push(props.value[i].cpu_name)
-    }
-    CPU_Usage(CPU_usage, CPU_name);
+    let [bytes_sent, bytes_recv, packets_sent, packets_recv, net_name] = Create_Data()
+    Bytes_chart(bytes_sent, bytes_recv, net_name)
+    Packets_chart(packets_sent, packets_recv, net_name)
   } else {
-    CPU_Usage([0], ['Not Found']);
+    Bytes_chart([0], [0], ['Not Found'])
+    Packets_chart([0], [0], ['Not Found'])
   }
 });
 
 //销毁chart
 onUnmounted(() => {
-  CPU_Usage_Chart.dispose();
+  Bytes_Chart.dispose();
+  Packets_Chart.dispose();
 });
 
 //侦测器监听父组件传参
 watch(props, () => {
-  let CPU_usage = []
-  let CPU_name = []
-  for (let i = 0; i < props.value.length; i++) {
-    CPU_usage.push(props.value[i].cpu_usage)
-    CPU_name.push(props.value[i].cpu_name)
+  if (!props.value) {
+    return
   }
-  CPU_Usage(CPU_usage, CPU_name);
+  Bytes_Chart.dispose();
+  Packets_Chart.dispose();
+  let [bytes_sent, bytes_recv, packets_sent, packets_recv, net_name] = Create_Data()
+  Bytes_chart(bytes_sent, bytes_recv, net_name)
+  Packets_chart(packets_sent, packets_recv, net_name)
 });
 
 //监听Theme变化
@@ -78,37 +56,34 @@ watch(store.getTheme, () => {
   if (!props.value) {
     return
   }
-  CPU_Usage_Chart.dispose();
-  let CPU_usage = []
-  let CPU_name = []
-  for (let i = 0; i < props.value.length; i++) {
-    CPU_usage.push(props.value[i].cpu_usage)
-    CPU_name.push(props.value[i].cpu_name)
-  }
-  CPU_Usage(CPU_usage, CPU_name);
+  Bytes_Chart.dispose();
+  Packets_Chart.dispose();
+  let [bytes_sent, bytes_recv, packets_sent, packets_recv, net_name] = Create_Data()
+  Bytes_chart(bytes_sent, bytes_recv, net_name)
+  Packets_chart(packets_sent, packets_recv, net_name)
 });
 
-//绘制CPU使用率
-const CPU_Usage = function (usage: Array<number>, name: Array<string>) {
+//绘制Bytes信息
+const Bytes_chart = function (bytes_sent: Array<number>, bytes_recv: Array<number>, name: Array<string>) {
   if (store.getTheme() == "light") {
     echarts.registerTheme('LightTheme', LightTheme)
-    CPU_Usage_Chart = echarts.init(document.getElementById("CPU_Usage_Chart")!, 'LightTheme', {height: 322 * usage.length - 22});
+    Bytes_Chart = echarts.init(document.getElementById("Bytes_Chart")!, 'LightTheme', {height: 322 * name.length - 22});
   } else {
     echarts.registerTheme('DarkTheme', DarkTheme)
-    CPU_Usage_Chart = echarts.init(document.getElementById("CPU_Usage_Chart")!, 'DarkTheme', {height: 322 * usage.length - 22});
+    Bytes_Chart = echarts.init(document.getElementById("Bytes_Chart")!, 'DarkTheme', {height: 322 * name.length - 22});
   }
-  //CPU使用率
+  //bytes 信息
   let data = []
-  for (let i = 0; i < usage.length; i++) {
+  for (let i = 0; i < name.length; i++) {
     data.push({
-      name: 'CPU' + (i + 1),
+      name: 'bytes: ' + name[i],
       type: 'pie',
       radius: 80,
       center: ['50%', 200 + i * 322],
-      stillShowZeroSum: false,
+      stillShowZeroSum: true,
       data: [
-        {value: usage[i], name: 'CPU Usage'},
-        {value: 100 - usage[i], name: 'CPU Idle'},
+        {value: bytes_sent[i], name: 'bytes sent'},
+        {value: bytes_recv[i], name: 'bytes received'},
       ],
       emphasis: {
         itemStyle: {
@@ -119,24 +94,27 @@ const CPU_Usage = function (usage: Array<number>, name: Array<string>) {
       }
     })
   }
-  //CPU名称
+  //Net名称
   let title = []
   title.push({
-    text: 'CPU Usage',
+    text: 'Net',
     left: 'center'
   })
-  for (let i = 0; i < usage.length; i++) {
+  for (let i = 0; i < name.length; i++) {
     title.push({
-      subtext: 'CPU Usage: ' + name[i],
+      subtext: name[i],
       left: '50%',
       top: 50 + 322 * i,
       textAlign: 'center'
     })
   }
-  CPU_Usage_Chart.setOption({
+  Bytes_Chart.setOption({
     title: title,
     tooltip: {
-      trigger: 'item'
+      trigger: 'item',
+      formatter: (params: any) => {
+        return params.seriesName + "<br>" + params.marker + params.name + ":&nbsp;&nbsp;&nbsp;&nbsp;" + "<span style='font-weight: bold'>" + params.value + "</span>" + " MB";
+      },
     },
     legend: {
       orient: 'vertical',
@@ -145,10 +123,93 @@ const CPU_Usage = function (usage: Array<number>, name: Array<string>) {
     series: data,
   });
   window.onresize = function () {//自适应大小
-    CPU_Usage_Chart.resize();
+    Bytes_Chart.resize();
   };
 }
 
+//绘制绘制Packets信息
+const Packets_chart = function (packets_sent: Array<number>, packets_recv: Array<number>, name: Array<string>) {
+  if (store.getTheme() == "light") {
+    echarts.registerTheme('LightTheme', LightTheme)
+    Packets_Chart = echarts.init(document.getElementById("Packets_Chart")!, 'LightTheme', {height: 322 * name.length - 22});
+  } else {
+    echarts.registerTheme('DarkTheme', DarkTheme)
+    Packets_Chart = echarts.init(document.getElementById("Packets_Chart")!, 'DarkTheme', {height: 322 * name.length - 22});
+  }
+  //packet 信息
+  let data = []
+  for (let i = 0; i < name.length; i++) {
+    data.push({
+      name: 'packets: ' + name[i],
+      type: 'pie',
+      radius: 80,
+      center: ['50%', 200 + i * 322],
+      stillShowZeroSum: true,
+      data: [
+        {value: packets_sent[i], name: 'packets sent'},
+        {value: packets_recv[i], name: 'packets received'},
+      ],
+      emphasis: {
+        itemStyle: {
+          shadowBlur: 10,
+          shadowOffsetX: 0,
+          shadowColor: 'rgba(0, 0, 0, 0.5)'
+        }
+      }
+    })
+  }
+  //Net名称
+  let title = []
+  title.push({
+    text: 'Net Usage',
+    left: 'center'
+  })
+  for (let i = 0; i < name.length; i++) {
+    title.push({
+      subtext: name[i],
+      left: '50%',
+      top: 50 + 322 * i,
+      textAlign: 'center'
+    })
+  }
+  Packets_Chart.setOption({
+    title: title,
+    tooltip: {
+      trigger: 'item',
+      formatter: (params: any) => {
+        return params.seriesName + "<br>" + params.marker + params.name + ":&nbsp;&nbsp;&nbsp;&nbsp;" + "<span style='font-weight: bold'>" + params.value + "</span>" + " MB";
+      },
+    },
+    legend: {
+      orient: 'vertical',
+      left: 'left'
+    },
+    series: data,
+  });
+  window.onresize = function () {//自适应大小
+    Packets_Chart.resize();
+  };
+}
+
+//构造数据
+function Create_Data() {
+  let bytes_sent = []
+  let bytes_recv = []
+  let packets_sent = []
+  let packets_recv = []
+  let net_name = []
+  for (let i = 0; i < props.value.length; i++) {
+    if (props.value[i].bytes_sent != 0 && props.value[i].bytes_sent != 0 &&
+        props.value[i].packets_sent != 0 && props.value[i].packets_received != 0) {
+      bytes_sent.push(props.value[i].bytes_sent)
+      bytes_recv.push(props.value[i].bytes_sent)
+      packets_sent.push(props.value[i].packets_sent)
+      packets_recv.push(props.value[i].packets_received)
+      net_name.push(props.value[i].net_name)
+    }
+  }
+  return [bytes_sent, bytes_recv, packets_sent, packets_recv, net_name]
+}
 </script>
 
 <style scoped>
@@ -162,58 +223,14 @@ const CPU_Usage = function (usage: Array<number>, name: Array<string>) {
   margin: auto;
 }
 
-/*卡片布局*/
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 20px;
-}
-
-.box-card {
-  width: 480px;
-  height: 300px;
-  border-radius: 6px;
-  transition: all 0.3s;
-  margin-bottom: 20px;
-}
-
-.box-card:hover {
-  transition: all 0.3s;
-  border-radius: 6px;
-}
-
-.light .box-card:hover {
-  background: #ffffff;
-  box-shadow: 7px 7px 14px #c4c4c4,
-  -7px -7px 14px #ffffff;
-  transition: all 0.3s;
-}
-
-.dark .box-card:hover {
-  background: #1d1e1f;
-  box-shadow: 7px 7px 14px #161718,
-  -7px -7px 14px #242526;
-  transition: all 0.3s;
-}
-
 
 /*左右布局*/
 .Left_container .Right_container {
   height: 100%;
 }
 
-
-/*名称*/
-.CPU_info_title {
-  font-size: 20px;
-  text-align: center;
-  width: 100%;
-  font-weight: bold;
-}
-
-/*CPU使用率Echart样式*/
-#CPU_Usage_Chart {
+/*Net使用率Echart样式*/
+#Bytes_Chart, #Packets_Chart {
   transition: all 0.3s;
   border-radius: 2px;
   border: 1px solid #0000001f;
@@ -221,56 +238,22 @@ const CPU_Usage = function (usage: Array<number>, name: Array<string>) {
   margin-bottom: 20px;
 }
 
-#CPU_Usage_Chart:hover {
+#Bytes_Chart:hover, #Packets_Chart:hover {
   transition: all 0.3s;
   border-radius: 6px;
 }
 
-.light #CPU_Usage_Chart:hover {
+.light #Bytes_Chart:hover, .light #Packets_Chart:hover {
   background: #ffffff;
   box-shadow: 7px 7px 14px #c4c4c4,
   -7px -7px 14px #ffffff;
   transition: all 0.3s;
 }
 
-.dark #CPU_Usage_Chart:hover {
+.dark #Bytes_Chart:hover, .dark #Packets_Chart:hover {
   background: #1d1e1f;
   box-shadow: 7px 7px 14px #161718,
   -7px -7px 14px #242526;
   transition: all 0.3s;
-}
-
-/*CPU信息字段*/
-.CPU_info_name {
-  font-size: 14px;
-  padding: 6px 7px;
-  text-align: left;
-  line-height: 35px;
-  transition: all 0.3s;
-}
-
-.dark .CPU_info_name:hover {
-  background-color: #edede9;
-  color: #303133;
-  font-size: 16px;
-  border-radius: 15px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.light .CPU_info_name:hover {
-  background-color: #caf0f8;
-  font-size: 16px;
-  border-radius: 15px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.CPU_info_value {
-  font-weight: normal;
-  text-align: center;
-  display: inline-block;
-  width: 150px;
-  float: right;
 }
 </style>

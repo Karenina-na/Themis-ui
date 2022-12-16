@@ -45,12 +45,7 @@ const store = useGlobalStore()
 //初始化
 onMounted(() => {
   if (props.value) {
-    let CPU_usage = []
-    let CPU_name = []
-    for (let i = 0; i < props.value.length; i++) {
-      CPU_usage.push(props.value[i].cpu_usage)
-      CPU_name.push(props.value[i].cpu_name)
-    }
+    let [CPU_usage, CPU_name] = Create_Data()
     CPU_Usage(CPU_usage, CPU_name);
   } else {
     CPU_Usage([0], ['Not Found']);
@@ -63,13 +58,12 @@ onUnmounted(() => {
 });
 
 //侦测器监听父组件传参
-watch(props, () => {
-  let CPU_usage = []
-  let CPU_name = []
-  for (let i = 0; i < props.value.length; i++) {
-    CPU_usage.push(props.value[i].cpu_usage)
-    CPU_name.push(props.value[i].cpu_name)
+watch(props, (newVal) => {
+  if (!newVal.value) {
+    return
   }
+  CPU_Usage_Chart.dispose();
+  let [CPU_usage, CPU_name] = Create_Data()
   CPU_Usage(CPU_usage, CPU_name);
 });
 
@@ -79,12 +73,7 @@ watch(store.getTheme, () => {
     return
   }
   CPU_Usage_Chart.dispose();
-  let CPU_usage = []
-  let CPU_name = []
-  for (let i = 0; i < props.value.length; i++) {
-    CPU_usage.push(props.value[i].cpu_usage)
-    CPU_name.push(props.value[i].cpu_name)
-  }
+  let [CPU_usage, CPU_name] = Create_Data()
   CPU_Usage(CPU_usage, CPU_name);
 });
 
@@ -133,10 +122,14 @@ const CPU_Usage = function (usage: Array<number>, name: Array<string>) {
       textAlign: 'center'
     })
   }
+
   CPU_Usage_Chart.setOption({
     title: title,
     tooltip: {
-      trigger: 'item'
+      trigger: 'item',
+      formatter: (params: any) => {
+        return params.seriesName + "<br>" + params.marker + params.name + ":&nbsp;&nbsp;&nbsp;&nbsp;" + "<span style='font-weight: bold'>" + params.value + "</span>" + " %";
+      },
     },
     legend: {
       orient: 'vertical',
@@ -147,6 +140,17 @@ const CPU_Usage = function (usage: Array<number>, name: Array<string>) {
   window.onresize = function () {//自适应大小
     CPU_Usage_Chart.resize();
   };
+}
+
+//构造数据
+function Create_Data() {
+  let CPU_usage = []
+  let CPU_name = []
+  for (let i = 0; i < props.value.length; i++) {
+    CPU_usage.push(props.value[i].cpu_usage)
+    CPU_name.push(props.value[i].cpu_name)
+  }
+  return [CPU_usage, CPU_name]
 }
 
 </script>
@@ -171,7 +175,7 @@ const CPU_Usage = function (usage: Array<number>, name: Array<string>) {
 }
 
 .box-card {
-  width: 480px;
+  width: 500px;
   height: 300px;
   border-radius: 6px;
   transition: all 0.3s;

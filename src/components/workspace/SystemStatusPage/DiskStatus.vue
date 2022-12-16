@@ -49,12 +49,7 @@ const store = useGlobalStore()
 //初始化
 onMounted(() => {
   if (props.value) {
-    let Disk_usage = []
-    let Disk_name = []
-    for (let i = 0; i < props.value.length; i++) {
-      Disk_usage.push(props.value[i].disk_usage)
-      Disk_name.push(props.value[i].disk_name)
-    }
+    let [Disk_usage, Disk_name] = Create_Data()
     Disk_Usage(Disk_usage, Disk_name);
   } else {
     Disk_Usage([0], ['Not Found']);
@@ -68,12 +63,7 @@ onUnmounted(() => {
 
 //侦测器监听父组件传参
 watch(props, () => {
-  let Disk_usage = []
-  let Disk_name = []
-  for (let i = 0; i < props.value.length; i++) {
-    Disk_usage.push(props.value[i].disk_usage)
-    Disk_name.push(props.value[i].disk_name)
-  }
+  let [Disk_usage, Disk_name] = Create_Data()
   Disk_Usage(Disk_usage, Disk_name);
 });
 
@@ -83,12 +73,7 @@ watch(store.getTheme, () => {
     return
   }
   Disk_Usage_Chart.dispose();
-  let Disk_usage = []
-  let Disk_name = []
-  for (let i = 0; i < props.value.length; i++) {
-    Disk_usage.push(props.value[i].disk_usage)
-    Disk_name.push(props.value[i].disk_name)
-  }
+  let [Disk_usage, Disk_name] = Create_Data()
   Disk_Usage(Disk_usage, Disk_name);
 });
 
@@ -153,6 +138,17 @@ const Disk_Usage = function (usage: Array<number>, name: Array<string>) {
   };
 }
 
+//构造数据
+function Create_Data() {
+  let Disk_usage = []
+  let Disk_name = []
+  for (let i = 0; i < props.value.length; i++) {
+    Disk_usage.push(props.value[i].disk_usage)
+    Disk_name.push(props.value[i].disk_name)
+  }
+  return [Disk_usage, Disk_name]
+}
+
 </script>
 
 <style scoped>
@@ -175,7 +171,7 @@ const Disk_Usage = function (usage: Array<number>, name: Array<string>) {
 }
 
 .box-card {
-  width: 480px;
+  width: 500px;
   height: 350px;
   border-radius: 6px;
   transition: all 0.3s;
