@@ -13,6 +13,7 @@ const props = defineProps(['namespace'])
 </script>
 
 <style scoped>
+@import "@/assets/css/slide-in-blurred-top.css";
 /**盒子 */
 .Namespace-box {
   position: relative;
@@ -74,7 +75,4 @@ const props = defineProps(['namespace'])
   color: #343a40;
   transition: all 0.5s;
 }
-
-
-/**卡片 */
 </style>

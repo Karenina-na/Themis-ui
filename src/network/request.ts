@@ -1,6 +1,6 @@
 import axios from "axios";
-import { useGlobalStore } from "@/stores/GlobalStore";
-import { Base64 } from 'js-base64';
+import {useGlobalStore} from "@/stores/GlobalStore";
+import {Base64} from 'js-base64';
 
 const globalStore = useGlobalStore();
 

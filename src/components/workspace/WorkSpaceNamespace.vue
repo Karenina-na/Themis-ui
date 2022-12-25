@@ -1,8 +1,12 @@
 <template>
   <el-scrollbar :height="length">
+    <div class="single_freshData">
+      <FreshDataButton/>
+    </div>
     <div class="WorkspaceNamespace-box">
       <NamespaceBox v-for="(namespace, index) of namespaces" :key="index" :namespace="namespace"
-                    class="namespaceBox" @click="SelectNamespace(namespace)"/>
+                    class="namespaceBox" @click="SelectNamespace(namespace)">
+      </NamespaceBox>
     </div>
   </el-scrollbar>
 </template>
@@ -11,6 +15,7 @@
 import NamespaceBox from './NamespacePage/NamespaceBox.vue'
 import {ElMessage, ElMessageBox} from 'element-plus'
 import {GetAllNamespaces, GetColoniesAndInstancesByNamespace} from '@/network/Manager';
+import FreshDataButton from "@/components/workspace/NamespacePage/FreshDataButton.vue";
 import {markRaw, onMounted, ref, watchEffect} from 'vue';
 import WifiIcon from '../WifiIcon.vue'
 import {SetupServersStore} from '@/stores/SetupServersStore'
@@ -107,10 +112,19 @@ function GetNamespace() {
 </script>
 
 <style scoped>
+
 /**盒子 */
 .WorkspaceNamespace-box {
   width: 100%;
   height: auto;
+}
+
+/*刷新按钮布局*/
+.single_freshData {
+  padding-right: 50px;
+  position: fixed;
+  right: 0;
+  z-index: 100;
 }
 
 /**每个命名空间盒子 */
@@ -120,4 +134,5 @@ function GetNamespace() {
   margin-right: 10px;
   float: left;
 }
+
 </style>

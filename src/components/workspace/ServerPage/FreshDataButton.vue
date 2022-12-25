@@ -5,11 +5,17 @@
 </template>
 
 <script lang="ts" setup>
-import {GetSchedulerInfo} from "@/network/Manager";
+import {GetInstancesByNamespaceColoniesInstances} from "@/network/Manager";
 import {ElMessage, ElNotification} from "element-plus";
-import {SetupServersStore} from '@/stores/SetupServersStore'
+import {onMounted} from "vue";
 
-let store = SetupServersStore()
+
+const prop = defineProps(['namespace', 'colony', 'name'])
+const emit = defineEmits(['SetServer'])
+
+onMounted(() => {
+})
+
 let timer: any = null
 
 //刷新数据
@@ -19,26 +25,15 @@ function FreshData() {
   }
   //设置定时器防止刷新过快
   timer = setTimeout(() => {
-    ElNotification({
-      type: 'success',
-      title: 'Fresh Data',
-      message: 'success',
-      duration: 2000,
-    })
-    GetSchedulerInfo().then((res) => {
-      const status = new Map()
-      status.set('host_info', res.data.host_info)
-      status.set('cpu_info', res.data.cpu_info)
-      status.set('mem_info', res.data.mem_info)
-      status.set('disk_info', res.data.disk_info)
-      status.set('net_info', res.data.net_info)
-      status.set('pool_info', {
-        core_num: res.data.pool_core_num,
-        max_num: res.data.pool_max_num,
-        activate_num: res.data.pool_activate_num,
-        job_num: res.data.pool_job_num,
+    GetInstancesByNamespaceColoniesInstances(prop.namespace, prop.colony, prop.name).then(res => {
+      ElNotification({
+        type: 'success',
+        title: 'Fresh Data',
+        message: 'success',
+        duration: 2000,
       })
-      store.SetSystemStatus(status)
+      //调用父组件传递到方法
+      emit('SetServer', res.data)
     }, (err) => {
       ElMessage({
         message: 'loading data error: ' + err,

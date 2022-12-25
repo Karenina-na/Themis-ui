@@ -1,5 +1,5 @@
 import service from "@/network/request";
-import { Base64 } from "js-base64";
+import {Base64} from "js-base64";
 
 //登录
 export function LoginNetwork(account: string, password: string) {
@@ -42,6 +42,36 @@ export function GetSchedulerInfo() {
     const config = {
         method: 'get',
         url: '/operator/cluster/getStatus'
+    }
+    return service(config)
+}
+
+//获取指定命名空间、集群、服务的所有实例
+export function GetInstancesByNamespaceColoniesInstances(namespace: string, colonies: string, instances: string) {
+    const config = {
+        method: 'post',
+        url: '/operator/CURD/getInstance',
+        data: {
+            "namespace": namespace,
+            "colony": colonies,
+            "name": instances
+        }
+    }
+    return service(config)
+}
+
+//删除指定实例
+export function DeleteInstanceByNamespaceColoniesInstances(namespace: string, colonies: string, instances: string, IP: string, port: string) {
+    const config = {
+        method: 'delete',
+        url: '/operator/CURD/blacklistInstance',
+        data: {
+            "namespace": namespace,
+            "colony": colonies,
+            "name": instances,
+            "IP": IP,
+            "port": port
+        }
     }
     return service(config)
 }

@@ -72,8 +72,17 @@
           </el-sub-menu>
         </el-sub-menu>
 
+        <!--black list-->
+        <el-menu-item index="4" @click="getBlackList()">
+          <el-icon :size="20">
+            <DeleteFilled/>
+          </el-icon>
+          <template #title><span :class="{ 'workspace-first-level-title-close': isCollapse }"
+                                 class="workspace-first-level-title">blacklist</span></template>
+        </el-menu-item>
+
         <!--operator status-->
-        <el-menu-item index="4" @click="getOperator()">
+        <el-menu-item index="5" @click="getOperator()">
           <el-icon :size="20">
             <icon-menu/>
           </el-icon>
@@ -82,7 +91,7 @@
         </el-menu-item>
 
         <!--document status-->
-        <el-menu-item index="5" @click="getDocument()">
+        <el-menu-item index="6" @click="getDocument()">
           <el-icon :size="20">
             <Document/>
           </el-icon>
@@ -100,6 +109,7 @@ import {
   ArrowDown,
   ArrowRight,
   DArrowRight,
+  DeleteFilled,
   Document,
   House,
   LocationFilled,
@@ -128,6 +138,13 @@ function getNamespaces() {
   })
 }
 
+//获取黑名单
+function getBlackList() {
+  router.push({
+    path: '/workspace/blacklist',
+  })
+}
+
 //操作页面
 function getOperator() {
   router.push({
@@ -144,7 +161,15 @@ function getDocument() {
 
 //选择当前命名空间下的服务器
 function choice_server(colony: number, name: number) {
-  console.log(colony, name)
+  let namespace = store.GetNamespace();
+  router.push({
+    path: '/workspace/server',
+    query: {
+      namespace: namespace,
+      colony: colony,
+      name: name
+    }
+  })
 }
 
 //选择查看的系统环境

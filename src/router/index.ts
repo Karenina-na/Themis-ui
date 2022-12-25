@@ -26,11 +26,20 @@ const router = createRouter({
                     name: 'system',
                     component: () => import('@/components/workspace/WorkspaceSystemStatus.vue'),
                 },
-
                 {
                     path: 'namespace',
                     name: 'namespace',
                     component: () => import('@/components/workspace/WorkSpaceNamespace.vue')
+                },
+                {
+                    path: 'server',
+                    name: 'server',
+                    component: () => import('@/components/workspace/WorkspaceServer.vue')
+                },
+                {
+                    path: 'blacklist',
+                    name: 'blacklist',
+                    component: () => import('@/components/workspace/WorkspaceBlacklist.vue')
                 },
                 {
                     path: 'operator',

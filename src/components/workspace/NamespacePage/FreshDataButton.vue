@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import {GetSchedulerInfo} from "@/network/Manager";
+import {GetAllNamespaces, GetColoniesAndInstancesByNamespace} from "@/network/Manager";
 import {ElMessage, ElNotification} from "element-plus";
 import {SetupServersStore} from '@/stores/SetupServersStore'
 
@@ -14,9 +14,11 @@ let timer: any = null
 
 //刷新数据
 function FreshData() {
+
   if (timer) {
     clearTimeout(timer)
   }
+
   //设置定时器防止刷新过快
   timer = setTimeout(() => {
     ElNotification({
@@ -25,28 +27,35 @@ function FreshData() {
       message: 'success',
       duration: 2000,
     })
-    GetSchedulerInfo().then((res) => {
-      const status = new Map()
-      status.set('host_info', res.data.host_info)
-      status.set('cpu_info', res.data.cpu_info)
-      status.set('mem_info', res.data.mem_info)
-      status.set('disk_info', res.data.disk_info)
-      status.set('net_info', res.data.net_info)
-      status.set('pool_info', {
-        core_num: res.data.pool_core_num,
-        max_num: res.data.pool_max_num,
-        activate_num: res.data.pool_activate_num,
-        job_num: res.data.pool_job_num,
-      })
-      store.SetSystemStatus(status)
-    }, (err) => {
-      ElMessage({
-        message: 'loading data error: ' + err,
-        type: 'error',
-        duration: 1000,
-      })
-    })
+    GetNamespace()
+    GetColonyAndServerNameByNamespace(store.GetNamespace())
   }, 1000)
+}
+
+// 获取命名空间
+function GetNamespace() {
+  GetAllNamespaces().then((res) => {
+    store.SetNamespaceNameList(res.data)
+  }, (err) => {
+    ElMessage({
+      message: 'loading data error: ' + err,
+      type: 'error',
+      duration: 1000,
+    })
+  })
+}
+
+// 获取指定命名空间下的所有集群和服务名称
+function GetColonyAndServerNameByNamespace(namespace: string) {
+  GetColoniesAndInstancesByNamespace(namespace).then((res) => {
+    store.SetColoniesAndInstancesNameList(res.data)
+  }, (err) => {
+    ElMessage({
+      message: 'loading data error: ' + err,
+      type: 'error',
+      duration: 1000,
+    })
+  })
 }
 </script>
 

@@ -28,8 +28,6 @@ import NamespaceCard from './NamespacePage/NamespaceCard.vue';
 import {SetupServersStore} from '@/stores/SetupServersStore'
 import TurtleIcon from '@/components/TurtleIcon.vue'
 import ProudIcon from '@/components/ProudIcon.vue'
-import {GetAllNamespaces, GetColoniesAndInstancesByNamespace} from '@/network/Manager';
-import {ElMessage} from 'element-plus'
 import {ref, watchEffect} from 'vue'
 
 let store = SetupServersStore()
@@ -42,6 +40,7 @@ watchEffect(() => {
 
 let timer: any = null
 
+//刷新网页
 function fresh_data() {
   if (timer) {
     clearTimeout(timer)
@@ -49,27 +48,8 @@ function fresh_data() {
 
   //设置定时器防止刷新过快
   timer = setTimeout(() => {
-    ElMessage({
-      type: 'success',
-      message: 'refresh data',
-    })
-    GetNamespace()
-    GetColonyAndServerNameByNamespace(store.GetNamespace())
+    window.location.reload()
   }, 1000)
-}
-
-// 获取命名空间
-function GetNamespace() {
-  GetAllNamespaces().then((res) => {
-    store.SetNamespaceNameList(res.data)
-  })
-}
-
-// 获取指定命名空间下的所有集群和服务名称
-function GetColonyAndServerNameByNamespace(namespace: string) {
-  GetColoniesAndInstancesByNamespace(namespace).then((res) => {
-    store.SetColoniesAndInstancesNameList(res.data)
-  })
 }
 
 
