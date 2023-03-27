@@ -37,6 +37,31 @@ export function GetColoniesAndInstancesByNamespace(namespace: string) {
     return service(config)
 }
 
+//获取黑名单实例
+export function GetBlacklistInstances() {
+    const config = {
+        method: 'get',
+        url: '/operator/CURD/getBlacklist'
+    }
+    return service(config)
+}
+
+//删除黑名单实例
+export function DeleteBlacklistInstance(namespace: string, colonies: string, instances: string, IP: string, port: string) {
+    const config = {
+        method: 'delete',
+        url: '/operator/CURD/deleteBlacklistInstance',
+        data: {
+            "namespace": namespace,
+            "colony": colonies,
+            "name": instances,
+            "IP": IP,
+            "port": port
+        }
+    }
+    return service(config)
+}
+
 //获取调度中心信息
 export function GetSchedulerInfo() {
     const config = {

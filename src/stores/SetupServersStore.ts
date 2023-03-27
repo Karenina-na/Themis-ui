@@ -60,11 +60,25 @@ export const SetupServersStore = defineStore('SetupServersStore', () => {
         SystemStatus.value = status
     }
 
+    // 全局可用黑名单实例列表
+    const BlackListInstancesList = ref(new Array<any>());
+
+    // 获取黑名单实例列表
+    function GetBlackListInstancesList() {
+        return BlackListInstancesList.value
+    }
+
+    // 设置黑名单实例列表
+    function SetBlackListInstancesList(list: Array<any>) {
+        BlackListInstancesList.value = list
+    }
+
     return {
         GetNamespaceNameList, SetNamespaceNameList, GetNamespaceNameListLength,
         GetNamespace, SetNamespace,
         GetColoniesAndInstancesNameList, SetColoniesAndInstancesNameList,
-        GetSystemStatus, SetSystemStatus
+        GetSystemStatus, SetSystemStatus,
+        GetBlackListInstancesList, SetBlackListInstancesList
     }
 })
 

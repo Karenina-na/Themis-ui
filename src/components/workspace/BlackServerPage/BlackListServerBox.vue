@@ -14,9 +14,6 @@
         <div class="Server_info_value">{{ prop.server.port }}</div>
       </div>
       <hr/>
-      <div class="Server_info_name">UDP listen port :
-        <div class="Server_info_value">{{ prop.server.udp_port }}</div>
-      </div>
       <hr/>
       <div class="Server_info_name">Time :
         <div class="Server_info_value">{{ prop.server.time }}</div>
@@ -43,15 +40,15 @@ import {ElMessage, ElMessageBox} from "element-plus";
 import {markRaw, ref} from "vue";
 import WifiIcon from "@/components/WifiIcon.vue";
 import {useLoading} from "@/util/Loading";
-import {DeleteInstanceByNamespaceColoniesInstances} from "@/network/Manager";
+import {DeleteBlacklistInstance} from "@/network/Manager";
 
 const prop = defineProps(['server'])
 let display = ref(true)
 
-//删除该服务
+//从黑名单删除
 function Delete_server() {
   ElMessageBox.confirm(
-      '<div style="margin-left:40px;font-size:15px;">' + 'Are you sure to delete this server? '
+      '<div style="margin-left:40px;font-size:15px;">' + 'Are you sure to delete this server from blackList? '
       + "<div style='font-size:16px;font-weight:400;margin:auto'>IP : " +
       "<span style='font-weight:700;font-size:15px;padding-left:20px;'>" + prop.server.IP + "</span>" +
       "</div>" + '</div>',
@@ -65,8 +62,7 @@ function Delete_server() {
       }
   ).then(() => {
     useLoading()
-    console.log(prop.server)
-    DeleteInstanceByNamespaceColoniesInstances(prop.server.namespace, prop.server.colony, prop.server.name, prop.server.IP, prop.server.port).then(res => {
+    DeleteBlacklistInstance(prop.server.namespace, prop.server.colony, prop.server.name, prop.server.IP, prop.server.port).then(res => {
       if (res.data === true) {
         ElMessage({
           message: 'delete success',
@@ -90,7 +86,6 @@ function Delete_server() {
     }).finally(() => {
       useLoading().endLoading()
     })
-
     useLoading().endLoading()
   }).catch(() => {
     ElMessage({
@@ -121,7 +116,7 @@ function Delete_server() {
 
 .box-card {
   width: 350px;
-  height: 480px;
+  height: 430px;
   border-radius: 6px;
   transition: all 0.3s;
 }

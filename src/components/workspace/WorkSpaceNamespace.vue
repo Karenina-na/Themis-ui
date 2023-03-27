@@ -14,7 +14,7 @@
 <script lang="ts" setup>
 import NamespaceBox from './NamespacePage/NamespaceBox.vue'
 import {ElMessage, ElMessageBox} from 'element-plus'
-import {GetAllNamespaces, GetColoniesAndInstancesByNamespace} from '@/network/Manager';
+import {GetAllNamespaces, GetBlacklistInstances, GetColoniesAndInstancesByNamespace} from '@/network/Manager';
 import FreshDataButton from "@/components/workspace/NamespacePage/FreshDataButton.vue";
 import {markRaw, onMounted, ref, watchEffect} from 'vue';
 import WifiIcon from '../WifiIcon.vue'
@@ -55,7 +55,13 @@ function SelectNamespace(namespace: string) {
     useLoading()
     store.SetNamespace(namespace)
     GetColonyAndServerNameByNamespace(namespace)
+    GetBlacklist()
     useLoading().endLoading()
+    ElMessage({
+      type: 'success',
+      message: 'choice namespace: ' + namespace,
+      duration: 1000,
+    })
   }).catch(() => {
     ElMessage({
       type: 'warning',
@@ -68,11 +74,19 @@ function SelectNamespace(namespace: string) {
 function GetColonyAndServerNameByNamespace(namespace: string) {
   GetColoniesAndInstancesByNamespace(namespace).then((res) => {
     store.SetColoniesAndInstancesNameList(res.data)
+  }, (err) => {
     ElMessage({
-      type: 'success',
-      message: 'choice namespace: ' + namespace,
+      message: 'loading data error: ' + err,
+      type: 'error',
       duration: 1000,
     })
+  })
+}
+
+//获取所有黑名单实例
+function GetBlacklist() {
+  GetBlacklistInstances().then((res) => {
+    store.SetBlackListInstancesList(res.data)
   }, (err) => {
     ElMessage({
       message: 'loading data error: ' + err,

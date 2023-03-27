@@ -19,7 +19,7 @@ import {useRoute} from "vue-router";
 import {GetInstancesByNamespaceColoniesInstances} from "@/network/Manager";
 import {useLoading} from "@/util/Loading";
 import {ElMessage} from "element-plus";
-import ServerBox from "@/components/workspace/ServerPage/ServerBox.vue";
+import ServerBox from "@/components/workspace/ServerPage/InstanceServerBox.vue";
 
 let length = document.documentElement.clientHeight - 110
 let namespace = ref()
