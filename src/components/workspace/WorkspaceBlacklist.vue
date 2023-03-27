@@ -4,6 +4,9 @@
       <div class="single_freshData">
         <FreshDataButton :colony="colony" :name="name" :namespace="namespace" @SetBlacklist="SetInstance"/>
       </div>
+      <div v-if="Servers.length === 0" style="padding-top:50px;">
+        <el-empty :image-size="width"/>
+      </div>
       <div v-for="(server,index) of Servers" :key="index" class="serverBox">
         <ServerBox :server="server" class="serverBox"/>
       </div>
@@ -20,10 +23,11 @@ import {ElMessage} from "element-plus";
 import ServerBox from "@/components/workspace/BlackServerPage/BlackListServerBox.vue";
 
 let length = document.documentElement.clientHeight - 110
+let width = document.documentElement.clientWidth / 5
 let namespace = ref()
 let colony = ref()
 let name = ref()
-let Servers = ref()
+let Servers = ref([])
 
 //初始化
 onMounted(() => {
